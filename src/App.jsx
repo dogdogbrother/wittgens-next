@@ -7,6 +7,7 @@ import OpenMarket from './app/market/open/index'
 import MyInvestment from './app/market/investment/index'
 import Earn from './app/earn/index'
 import Swap from './app/swap/index'
+import TokenizationProperty from './app/tokenization-property/index'
 
 export default function App() {
   return (
@@ -21,6 +22,7 @@ export default function App() {
             <Route path="open" element={<OpenMarket />} />
             <Route path="investment" element={<MyInvestment />} />
           </Route>
+          <Route path="tokenization-property" element={<TokenizationProperty />} />
           <Route path="earn" element={<Earn />} />
           <Route path="swap" element={<Swap />} />
         </Route>
