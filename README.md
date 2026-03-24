@@ -11,3 +11,7 @@ npm install -g uipro-cli
 # 2. 在项目目录下为 Cursor 初始化 Skill
 uipro init --ai cursor
 ```
+
+
+
+
