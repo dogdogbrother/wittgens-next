@@ -1,0 +1,33 @@
+<svg width="38" height="38" viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Injected Wallet" clip-path="url(#clip0_59_752)">
+<rect width="38" height="38" fill="white"/>
+<g id="coinbase-coin-seeklogo 1" clip-path="url(#clip1_59_752)">
+<g id="Frame" clip-path="url(#clip2_59_752)">
+<g id="Frame_2">
+<path id="Vector" d="M33.875 14.375V16M27.5 34.875H4.83333C3.88985 34.875 3.125 34.1102 3.125 33.1667V14.375" stroke="#304050" stroke-width="2.5625" stroke-linecap="round" stroke-linejoin="round"/>
+<path id="Vector_2" d="M3.125 5.83333C3.125 4.88985 3.88985 4.125 4.83333 4.125H32.1667C33.1102 4.125 33.875 4.88985 33.875 5.83333V14.375H3.125V5.83333Z" stroke="#304050" stroke-width="2.5625" stroke-linecap="round" stroke-linejoin="round"/>
+<path id="Vector_3" fill-rule="evenodd" clip-rule="evenodd" d="M8.25326 10.9582C9.19677 10.9582 9.96159 10.1933 9.96159 9.24984C9.96159 8.30632 9.19677 7.5415 8.25326 7.5415C7.30974 7.5415 6.54492 8.30632 6.54492 9.24984C6.54492 10.1933 7.30974 10.9582 8.25326 10.9582Z" fill="#304050"/>
+<path id="Vector_4" fill-rule="evenodd" clip-rule="evenodd" d="M13.3783 10.9582C14.3218 10.9582 15.0866 10.1933 15.0866 9.24984C15.0866 8.30632 14.3218 7.5415 13.3783 7.5415C12.4347 7.5415 11.6699 8.30632 11.6699 9.24984C11.6699 10.1933 12.4347 10.9582 13.3783 10.9582Z" fill="#304050"/>
+<path id="Vector_5" fill-rule="evenodd" clip-rule="evenodd" d="M18.5033 10.9582C19.4468 10.9582 20.2116 10.1933 20.2116 9.24984C20.2116 8.30632 19.4468 7.5415 18.5033 7.5415C17.5597 7.5415 16.7949 8.30632 16.7949 9.24984C16.7949 10.1933 17.5597 10.9582 18.5033 10.9582Z" fill="#304050"/>
+<path id="Vector_6" d="M25 25H19" stroke="#304050" stroke-width="2" stroke-linecap="round"/>
+<path id="Vector_7" d="M20 27L18 25L20 23" stroke="#304050" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+</g>
+</g>
+<g id="Frame_3">
+<path id="Vector_8" d="M24.334 21.5V19.6665H36.6673V22.3332C36.6673 22.3332 34.334 22.9998 34.334 24.9998C34.334 26.9998 36.6673 27.6665 36.6673 27.6665V30.3332H24.334V28.9998V28.5" stroke="#304050" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path id="Vector_9" d="M37.6667 25H37" stroke="#304050" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+</g>
+<defs>
+<clipPath id="clip0_59_752">
+<rect width="38" height="38" fill="white"/>
+</clipPath>
+<clipPath id="clip1_59_752">
+<rect width="34" height="34" fill="white" transform="translate(1 2)"/>
+</clipPath>
+<clipPath id="clip2_59_752">
+<rect width="40" height="40" fill="white" transform="translate(-2 -1)"/>
+</clipPath>
+</defs>
+</svg>
