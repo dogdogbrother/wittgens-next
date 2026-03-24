@@ -1,0 +1,765 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>房产代币化开发需求文档</title>
+  <link rel="stylesheet" href="https://stackedit.io/style.css" />
+</head>
+
+<body class="stackedit">
+  <div class="stackedit__html"><h2 id="基础功能">基础功能</h2>
+<p>1、SWAP：当前主要完成稳定币兑换即BEAC和USDT兑换，后期可以扩展<br>
+2、连接钱包：当前是币安链，后期扩展其他链<br>
+3、消息通知</p>
+<ul>
+<li>发送给个人的通知（格式化/后台录入）</li>
+<li>发送给全体用户的通知（格式化/后台录入）<br>
+4、语言切换：支持英文、简体中文、繁体中文、法语，泰国语、阿拉伯语、韩语、日语（逐渐增加的语言）<br>
+5、KYC的三方对接<br>
+6、谷歌地区的方对接<br>
+7、稳定币交易的方对接</li>
+</ul>
+<h2 id="account账户页">Account账户页</h2>
+<h3 id="入口：">入口：</h3>
+<p>点击链接钱包的头像、钱包地址、Account均可进入account页面，这是个人信息设置、数据聚合的模块<br>
+1、钱包模块：获取钱包内与平台有关的代币展示，包括：钱包总价值（美元）、ICON代币、代币符号（简称）、余额、发币选择字段、精度选择字段<br>
+2、My assets 我的资产<br>
+用导航区分我的资产</p>
+<blockquote>
+<p>Tokenized：代币化的资产，指房产代币资产，只有参与代币化的房东拥有该数据<br>
+Market：投资者在市场上购买的资产。预售市场投资购买的资产领取到个人钱包，Open market(二级市场)设置专用交易账户。<br>
+Governance Pool：治理池，质押BAS赚取BAS资产<br>
+Liquidity Pool：流动池，质押LP赚取BAS资产</p>
+</blockquote>
+<p>3、功能</p>
+<blockquote>
+<p>Fiat:选择当前法币币种<br>
+Precision:资产精度，默认0.01，可选择0.001；0.0001；0.00001；0.000001<br>
+My profile和KYC</p>
+</blockquote>
+<p>（1）、Tokenized</p>
+<ul>
+<li>房产代币的名称和符号，对应显示资产数值，单位RWAT</li>
+<li>Bootstrap liquidity:引导流动性的资产值<br>
+可操作的按键</li>
+<li>presale</li>
+<li>Withdraw</li>
+<li>D istribute</li>
+<li>Repurchases</li>
+<li>Claim</li>
+<li>Details<br>
+以上按键使用房产代币化首页的按键页面<br>
+（2）Market<br>
+Trading account:交易账号</li>
+<li>房产代币的名称和符号，对应显示资产数值，单位RWAT</li>
+<li>Bootstrap liquidity:引导流动性的资产值<br>
+可操作的按键</li>
+<li>Deposit：存入房产代币或者BEAC</li>
+<li>Withdraw：提现房产代代币或者BEAC到钱包</li>
+<li>My Investment：我的投资，使用已有的投资列表<br>
+（3）Governance Pool</li>
+<li>Total Staked（BAS）：质押BAS资产</li>
+<li>Total Received(sBAS)：质押收到的sBAS</li>
+<li>Claimed Rewards(BAS)：领取的奖励总和<br>
+可操作的按键</li>
+<li>Stake</li>
+<li>Claim</li>
+<li>Redeem</li>
+<li>My Investment<br>
+以上按键功能使用治理池的相应页面<br>
+（4）Liquidity Pool</li>
+<li>Total Staked（LP）：质押LP资产</li>
+<li>Claimed Rewards(BAS)：领取的奖励总和<br>
+可操作的按键</li>
+<li>Stake</li>
+<li>Claim</li>
+<li>Redeem</li>
+<li>My Investment<br>
+以上按键功能使用流动池的相应页面</li>
+</ul>
+<h4 id="my-profile和kyc页">My profile和KYC页</h4>
+<ul>
+<li>Edit photo:上传用户头像</li>
+<li>First name:编辑输入</li>
+<li>last name:编辑输入</li>
+<li>Year of birth:选择</li>
+<li>Phone number:电话号码，可验证</li>
+<li>Email:电话号码可验证</li>
+<li>KYC功能：点击KYC跳转方KYC验证</li>
+</ul>
+<h2 id="房产提交申请页入口是tokenize按键-">房产提交申请页(入口是Tokenize按键 )</h2>
+<h4 id="主要字段描述">主要字段描述</h4>
+<p>#####1. Issuer</p>
+<ul>
+<li>First Name:必填输入项，如果不填写提交，提示：Please fill this in</li>
+<li>Last name:同上</li>
+<li>Institution:选填项，如果是机构，机构名称填写</li>
+</ul>
+<h5 id="property">2. Property</h5>
+<p>Location： 搜索栏，下拉默认选项数据：使用当前位置，(可以与谷歌地图同步筛选数据)</p>
+<ul>
+<li>Contry/Region:选择国家或者地区数据，国家数据带搜索查询。</li>
+<li>Street address：填写街道地址</li>
+<li>Apt,floor,bldg(if applicable):填写楼栋，层，建筑号（如果适用）</li>
+<li>City/town/village:填写城市，镇，村</li>
+<li>Postal code (If applicable):邮政编码，选填</li>
+</ul>
+<p>3.Attributes</p>
+<ul>
+<li><strong>Property Status</strong>:单选项，2个数据选择其一</li>
+<li>Property Type:单选项，5个商业类型数据</li>
+<li>Use of proceeds:单选项，4个用途数据供选择</li>
+<li>Property tokenization options:单选，3个数据供选择</li>
+<li>Expected valuation(USD):输入期望的评估值</li>
+<li>Property Description：富文本输入<br>
+4.Mint token</li>
+<li>Token name:系统给出默认的格式化名字，格式为：RWAT- PRO-**，星号为序号,从00001开始编号，如果5位编码溢出自动进位，允许用户自己自定义名字。序号不能连续的弃用。</li>
+<li>Token symbol:系统给出默认的格式化符号，符号格式为RWAT**,星号为对应名字的序号，序号编码规则同代币名字的编码规则。</li>
+<li>Expected Token Supply:系统默认期望的代币供给数量为1M，用户可以修改这个数量。<br>
+5.Property Document<br>
+上传格式：PDF/JPEG/PNG<br>
+6.Property Photos<br>
+上传格式PDF/JPEG/PNG</li>
+</ul>
+<h2 id="application房产代币化主页">Application房产代币化主页</h2>
+<h3 id="顶部导航栏">顶部导航栏</h3>
+<p>顶部导航栏项目：Tokenize Market、Earn、SWAP，设置（吕工是否用到）、语言切换、消息通知、选择区块链、连接钱包<br>
+包含子菜单的项目：<br>
+Swap</p>
+<blockquote>
+<p>Stablecoin<br>
+Fiat<br>
+Dex</p>
+</blockquote>
+<p>Earn</p>
+<blockquote>
+<p>Governance Pool<br>
+Liquidity Pool</p>
+</blockquote>
+<h4 id="数据显示字段">数据显示字段</h4>
+<p>1、房产代币化首页数据展示字段</p>
+<ul>
+<li>Property token:获取代币名字显示；获取代币符号显示</li>
+<li>Tokenization status:房产代币化状态，有三个状态</li>
+</ul>
+<blockquote>
+<p>Tokenized代币化完成<br>
+Under review审核中<br>
+Rejected</p>
+</blockquote>
+<ul>
+<li>Presale status:预售状态，有三个状态</li>
+</ul>
+<blockquote>
+<p>Added to sequence<br>
+Live (90 days)<br>
+Ended</p>
+</blockquote>
+<ul>
+<li>Withdraw Status:房产代币提现状态（只要两种状态）</li>
+</ul>
+<blockquote>
+<p>Pending 待处理（部分提现也是待处理）<br>
+Withdrawn，全部提现</p>
+</blockquote>
+<p>2、Tokenized Assets</p>
+<ul>
+<li>Total supply:铸造代币总量，单位是RWAT,删除了与美元的换算数据。</li>
+<li>Tokenized property value：代币化的资产价值，使用USDT计价格，用线下房产估值（美元计价）转换为USDT计价。</li>
+<li>Application Date：申请日期</li>
+<li>Tokenization Date：代币化完成日期</li>
+</ul>
+<p>3、Bootstrap Liquidity</p>
+<ul>
+<li>Bootstrap liquidity（BEAC）:引导流动性，是根据房产代币单价乘以预售代币数量</li>
+<li>Bootstrap liquidity status：引导流动性状态，有两个状态</li>
+</ul>
+<blockquote>
+<p>Deposited已存入引导流动性BECA<br>
+Claimed已领取引导流动性</p>
+</blockquote>
+<ul>
+<li>Deposit （BEAC）：代币预售存入的引导流动性数据回显</li>
+<li>Claim （BEAC）：发行方领回引导流动性</li>
+<li>Deposit Date：引导流动性存入日期</li>
+<li>Claim Date：引导流动性领取日期</li>
+</ul>
+<h4 id="功能按键">功能按键</h4>
+<p>1、Tokenize：进入房产提交页（见房产提交申请页）<br>
+2、Swap:稳定币交换页入口，完成BEAC和USDT的交换<br>
+通过按键切换交换方向<br>
+3、Withdraw：房产代币提现入口<br>
+提现界面（弹窗）的关键字段说明：</p>
+<ul>
+<li>Wallet address：地址默认账户登陆地址，可编辑</li>
+<li>Assets：资产数量带出数据可以调整</li>
+<li>Token minting fee：第一次提现收费，这个费是固定费，数量后台配置，第二次和后续提现不收费，提现费显示为0<br>
+4、Presale：(原名叫ICO)是代币预售配置入口，<br>
+预售界面字段说明：<br>
+Presale  Assets
+<ul>
+<li>Total supply(RWAT) ：代币预售数量。系统获取到发行总量（Total supply）的x%作为默认数据带入，<strong>x%是后台对所有资产的配置项目，是第一优先级别</strong></li>
+<li>调整滑杆：用户使用滑动条可以自定义预售数量</li>
+<li>Bootstrap Liquidity(BEAC):引导流动性。引导流动性要求存入BEAC，没有BEAC的可以存入USDT或者去SWAP页面交换。这个字段数值是系统计算出来：计算的公式是：代币单价*预售数量。（代币单价是资产代币化价值除以代币发行总量，前者单位是USDT，后者是RWAT，即：USDT/RWAR）</li>
+<li>Presale period（days）:预售期限，单位：天，后台对每一项资产配置。</li>
+<li>Issue price：就是房产代币的单价，单位是：USDT/RWAT</li>
+</ul>
+</li>
+</ul>
+<p>5、Distribute：发行方存入资金分配给持币者入口。发行方理论上要按照确定的数额存入资金，如果存入数额不对，系统同样接受，差额部份平台线下和发行方交涉或者平台方垫付存入。如果发行方不存入资金，平台方存入发通知给持币者领取。资金数额后台针对每一项资产维护进系统。</p>
+<ul>
+<li>Current holders:当前代币持有者（系统只统计在预售环节中购买了代币的人）</li>
+<li>Holdings / Total:持有股份。这是指所有投资者当前持有代币的总数量占总发行量的比例，系统统计所有投资者钱包里的代币并求和并与总发行量对比计算这个数值。（分配收益就按照不同投资者钱包里持有的代币数量计算收益分成，应为目前收益不确定，分成有平台在适当的时候分配并发送通知，持币投资者自己领取）</li>
+<li>Required Deposit(USDT):这是发行方为分配收益必须存入平台的资金数量，<strong>这个数量由后台针对每一项资产维护进系统。前端显示给发行方。</strong></li>
+<li>如果发行方存入数量不足，也可以提交，平台线下催交。（发行方不分配的话，平台兜底，从后台存入这个资金，通知持币投资者领取）。<br>
+6、Repurchas:发行方回购代币存入资金的入口。<strong>存入资金的数额由后台维护进系统并发送通知给发行方。回购价格按照发行价格（项目清盘下架的情形）。</strong><br>
+回购界面（弹窗）主要字段<br>
+（等同于“5Distribute”）<br>
+7、Claim:发行方领取功能，内含三个分功能按键，分别是：</li>
+</ul>
+<blockquote>
+<p>Bootstrap Liquidity<br>
+Presale funds<br>
+Rental Earnings</p>
+</blockquote>
+<p>以上三个分功能按键对应的三个页面仅仅文案有区别，费率有别。以Boostrap Liquidity为例描述字段功能：</p>
+<ul>
+<li>Bootstrap liquidity（BEAC）:领取流动性，单位BEAC</li>
+<li>Presale funds:领取预售模具的资金，单位BEAC</li>
+<li>Rental earnings：领取房屋出租的租金收益，单位BEAC</li>
+<li>Fee:需要缴费，费率是领取总额的百分数x%，这个x%后台配置（**注意三个费率单独配置 **）</li>
+</ul>
+<h4 id="claim三个功能附加说明：">Claim三个功能附加说明：</h4>
+<blockquote>
+<p>文案有别是弹窗的标题和字段名称对应各自项目名称<br>
+<strong>费率有别是三个费率后台分别单独设<br>
+置。</strong></p>
+</blockquote>
+<p>8、Details:代币化房产详情页</p>
+<h4 id="房产三个状态及模块">房产三个状态及模块</h4>
+<blockquote>
+<p>Tokenized :代币化完成<br>
+Under Review 审核中<br>
+Rejected 被拒绝</p>
+</blockquote>
+<h3 id="三个状态共用房产信息展示：">三个状态共用房产信息展示：</h3>
+<p>ID：房产编号，编号规则：国家代码+11位流水编码<br>
+Issuer:发行方</p>
+<ul>
+<li>Name：姓名</li>
+<li>Email：电子邮箱</li>
+<li>Phone number:电话号码</li>
+<li>Institution：机构<br>
+Property:房产</li>
+<li>Property location:房产定位<br>
+Attributes</li>
+<li>Property Status：房产状态，数据来源于房产提交</li>
+<li><strong>Property Size</strong>：房产面积</li>
+<li><strong>Property Age</strong>：房龄</li>
+<li>Commercial Type：商业类型</li>
+<li>Use of Proceeds；融资用途</li>
+<li>Expected Valuation（USD）：期望的估值</li>
+</ul>
+<h4 id="property-document文档">property document:文档</h4>
+<h4 id="property-photos照片">property photos:照片</h4>
+<h4 id="invitation-code邀请码">Invitation code:邀请码</h4>
+<h2 id="tokenization代币化完成状态数据">Tokenization代币化完成状态数据</h2>
+<ul>
+<li>Tokenization status:状态</li>
+<li>Token name:代币名字</li>
+<li>Token symbol:代币符号</li>
+<li>Total supply:最大供应量</li>
+<li>Tokenized property value:代币化房产价值</li>
+<li>Withdraw status:提现状态</li>
+<li>Application Date：申请日期</li>
+<li>Tokenization Date：完成日期</li>
+</ul>
+<h4 id="presale-fundraising">Presale fundraising</h4>
+<ul>
+<li>Presale status:状态</li>
+<li>Presale supply:预售供应量</li>
+<li>Issue price (USDT /RWAT):发行价格</li>
+<li>Sold Assets :已售出</li>
+<li>Unsold Assets:未售出</li>
+<li>funds raised(USDT):募集到的资金</li>
+<li>Curent holders:当前持币者人数</li>
+<li>presale period(days):预售天数</li>
+<li>Start Date:开始日期</li>
+<li>End Date：结束日期</li>
+</ul>
+<h4 id="bootstrap-liquidity">Bootstrap liquidity</h4>
+<ul>
+<li>Bootstrap liquidity status:引导流动性状态，不累述</li>
+<li>Bootstrap liquidity(BEAC):引导流动性</li>
+<li>Deposited(BEAC):存入的BEAC</li>
+<li>Deposited(USDT):存入的USDT</li>
+<li>Claimed(BEAC):领走的引导流动性</li>
+</ul>
+<h4 id="claim-funds">Claim funds</h4>
+<p>领取资金的三个导航</p>
+<blockquote>
+<p>Rental earnings<br>
+Bootsrtap liquidity<br>
+Presale funds</p>
+</blockquote>
+<h4 id="bootstrap-liquidity-领取引导流动性，这是项目清盘">Bootstrap liquidity 领取引导流动性，这是项目清盘</h4>
+<ul>
+<li>Claim date：领取日期</li>
+<li>Claimed(BEAC)：已经领取的流动性（BEAC）</li>
+<li>Status:状态</li>
+</ul>
+<blockquote>
+<p>Successful<br>
+faild</p>
+</blockquote>
+<ul>
+<li>Clear All:全部取消</li>
+</ul>
+<h4 id="presale-funds-发行方-领取预售募集的资金（后台针对每一项资产有开关控制）">Presale funds 发行方 领取预售募集的资金（后台针对每一项资产有开关控制）</h4>
+<ul>
+<li>Claim date：领取日期</li>
+<li>Claimed(BEAC)：已经领取的预售募集资金（BEAC）</li>
+<li>Status:状态</li>
+</ul>
+<blockquote>
+<p>Successful<br>
+faild</p>
+</blockquote>
+<ul>
+<li>Clear All:全部取消</li>
+</ul>
+<h4 id="distribute-earnings">Distribute earnings</h4>
+<ul>
+<li>Distribution Date：分配日期</li>
+<li>Earnings (USDT)房东主动分配的租金收益（BEAC）</li>
+<li>Status:状态</li>
+</ul>
+<blockquote>
+<p>Successful<br>
+faild</p>
+</blockquote>
+<ul>
+<li>Clear All:全部取消</li>
+</ul>
+<h4 id="repurchases-发行方回购代币存入资金">Repurchases 发行方回购代币存入资金</h4>
+<ul>
+<li>Repurchase date：回购日期</li>
+<li>Deposited (USDT)：存入资金</li>
+<li>Repurchased (RWAT)：回购数量</li>
+<li>Status:状态</li>
+</ul>
+<blockquote>
+<p>Successful<br>
+faild</p>
+</blockquote>
+<ul>
+<li>Clear All:全部取消</li>
+</ul>
+<h3 id="tokenization代币化审核中">Tokenization代币化审核中</h3>
+<ul>
+<li>Tokenization Status：Under Review</li>
+<li>Application Date：申请日期</li>
+</ul>
+<h3 id="tokenization代币化被拒绝">Tokenization代币化被拒绝</h3>
+<ul>
+<li>Tokenization Status：Rejected</li>
+<li>Application Date：申请日期</li>
+<li>Reason for Rejection：被拒绝原因</li>
+<li>Application Date：申请日期<br>
+Rejection Date：拒绝日期</li>
+</ul>
+<h2 id="market市场">Market市场</h2>
+<h3 id="首页">首页</h3>
+<p>Market 市场页有三个功能页，分别是：</p>
+<blockquote>
+<p>presale market(预售市场)<br>
+open market（二级开方撮合市场）<br>
+My investment（我的投资）</p>
+</blockquote>
+<h3 id="、presale-market字段和数据功能">1、Presale market字段和数据功能</h3>
+<h4 id="模糊搜索栏：通过房产id，房产token-name和合约地址精确搜索房源">模糊搜索栏：通过房产ID，房产token name和合约地址精确搜索房源</h4>
+<h4 id="筛选标签：这些标签是用户在房产提交时提交的数据，主要有：">筛选标签：这些标签是用户在房产提交时提交的数据，主要有：</h4>
+<blockquote>
+<p>All 全部的<br>
+retail 商业的<br>
+office 办公用的<br>
+Tourism &amp; Hospitality旅游和酒店<br>
+Industrial &amp; Logistics工业和物流<br>
+Mixed-Use混合使用</p>
+</blockquote>
+<h4 id="房产上架首页展示的数据">房产上架首页展示的数据</h4>
+<p>（1）、<strong>OpenseaHouse:这是预售房产代币的标题，由后台维护进系统</strong><br>
+（2）、Unit 307,Arbutus ,Canada:这是房产的位置，用户房产提交位置数据<br>
+（3）、房产代币化信息，数据来源于房产代币化：</p>
+<blockquote>
+<p>代币名称：RWAT—PRO-100<br>
+代币符号：RWAT10000<br>
+房产ID：US002123456<br>
+代币合约地址：0x23456789010df78231a</p>
+</blockquote>
+<p>（4）、房产数据和代币预售数据</p>
+<ul>
+<li>预售环节的状态</li>
+</ul>
+<blockquote>
+<p>Live（预售正在进行中的）<br>
+Ended(预售结束，注意：房产代币预售结束如果代币有剩余，平台工作人员负责把预售剩余的代币转到平台机器人账户上，由机器人在二级open上商场挂买卖单交易)</p>
+</blockquote>
+<ul>
+<li><strong>Presale period（days）:60 days 这个数据是后台配置，所有资产均采用一个配置</strong></li>
+<li><strong>Estimated APY：11% 这个数据是后台配置，针对每一项资产配置年化收益率。（注意：这个数据在presale市场和open市场是同一数据</strong></li>
+<li>倒计时功能：有天倒计时和24小时倒计时，24小时结束减少1天，如此循环</li>
+<li>Start date 预售开始日期：后台把房产上架的日期</li>
+<li>End date 预售结束日期：到达设置的天数</li>
+<li>Presale supply(RWAT):预售数量，来源于presale配置引导流动性页面提交的数据</li>
+<li>Issue price(USDT/RWAT):发行价格，来源于presale配置引导流动性页面提交的数据</li>
+<li>Use of Proceeds资金用途，数据来源于房产的提交页</li>
+<li>Total supply:总供应量，来源于房产代币化</li>
+<li>Tokenized property value: 代币化房产价值，来源于房产代币化<br>
+（5）、Share subscription:认购功能按键，点击进入认购页：<br>
+认购页功能：存入USDT，收到RWAT**，单位统一是：RWAT。（注意星号是代币代币符号的顺序编号，来区分不同资产。）</li>
+</ul>
+<p>（6）、<strong>Details:这是预售市场单个房产的详情页入口</strong><br>
+导航</p>
+<blockquote>
+<p>Presale<br>
+<strong>Financial</strong><br>
+<strong>Introduction</strong><br>
+<strong>Documents</strong><br>
+<strong>location</strong><br>
+<strong>Earnings Distributions</strong></p>
+</blockquote>
+<p>字段数据说明</p>
+<ul>
+<li>presale status:和代币化首页的数据一致</li>
+<li>Issue price(USDT/RWAT):和预售提交页的数据一致</li>
+<li>sold:当前已经售出的房产代币数量（统计数据）</li>
+<li>Available:剩余的可以销售的代币数量（统计数据）</li>
+<li>Total supply:房产代币总供应量，数据来源于房产代币化</li>
+<li>Tokenized property value:代币化房产的数字资产价值（用USDT计价）用房产实际估值（美元）转为USDT的价值</li>
+<li>presale supply:预售房产代币数量，数据来源于预售提交页</li>
+<li>presale period(days) :预售天数，后台为所有资产统一配置的预售期限</li>
+<li>commercial type:房产商业类型，来源于房产提交</li>
+<li>Use of Proceeds:募集资金用途，来源于房产提交</li>
+<li>Estimated APY:预期的年化利率，后台为每一项资产配置的数据。</li>
+<li>introduction:房产介绍，富文本数据，来源于房产提交</li>
+<li>document:房产文档，来源于房产提交</li>
+<li>shouw all photos:房产图片来源于房产提交</li>
+<li>location:谷歌地图的定位数据，来源于房产提交</li>
+<li>Earning distributions:收益分配图表（统计数据）</li>
+</ul>
+<h3 id="、open-market-字段和数据功能">2、Open market 字段和数据功能</h3>
+<h4 id="模糊搜索栏：通过房产id，房产token-name和合约地址精确搜索房源-1">模糊搜索栏：通过房产ID，房产token name和合约地址精确搜索房源</h4>
+<h4 id="筛选标签：这些标签是用户在房产提交时提交的数据，主要有：-1">筛选标签：这些标签是用户在房产提交时提交的数据，主要有：</h4>
+<blockquote>
+<p>All 全部的<br>
+retail 商业的<br>
+office 办公用的<br>
+Tourism &amp; Hospitality旅游和酒店<br>
+Industrial &amp; Logistics工业和物流<br>
+Mixed-Use混合使用</p>
+</blockquote>
+<h4 id="房产上架首页展示的数据-1">房产上架首页展示的数据</h4>
+<p>（1）、OpenseaHouse:这是预售房产代币的标题，由后台维护进系统<br>
+（2）、Unit 307,Arbutus ,Canada:这是房产的位置，用户房产提交位置数据<br>
+（3）、房产代币化信息，数据来源于房产代币化：</p>
+<blockquote>
+<p>代币名称：RWAT—PRO-100<br>
+代币符号：RWAT100<br>
+房产ID：US002123456<br>
+代币合约地址：0x23456789010df78231a</p>
+</blockquote>
+<p>（4）、房产数据和市场数据</p>
+<ul>
+<li>Total supply:总供应量，来源于房产代币化</li>
+<li>Tokenized property value：数据来源于房产代币化</li>
+<li>Circulating Supply：当前在二级市场上流通的代币数量（不是在投资者钱包里的部份）</li>
+<li>Current Price(USDT/RWAT)：当前价格，获取房产代币当前的成交价格</li>
+<li>Estimated APY：预估的年化收益，和预售的数据是统一个数据，平台为每一类别资产配置</li>
+<li>Market Cap (USD)：市值：计价单位为美元（USD）</li>
+<li>Current Holders 当前持有者人数</li>
+<li>holdings/total:持有量占总发行量的比例</li>
+<li>use of proceeds:募资用途，来源于房产提交</li>
+</ul>
+<p>（5）Trade:进入订单墙和订单列表的按键入口，点击进入撮合交易订单墙和机器人交易。</p>
+<h1 id="撮合交易订单墙功能描述">撮合交易订单墙功能描述</h1>
+<blockquote></blockquote>
+<h4 id="初始机器人交易">初始机器人交易</h4>
+<p>机器人交易策略配置：为每一项资产配置交易机器人，配置项目有挂单价格梯度和数量，吃单价格梯度和数量，撤单价格梯度和数量，交易频率，交易深度</p>
+<h4 id="订单墙和交易页面字段功能数据">订单墙和交易页面字段功能数据</h4>
+<p>Order Book订单墙和订单列表（买单/卖单）：</p>
+<ul>
+<li>price(usdt):价格，使用USDT计价</li>
+<li>Amount:挂单数量</li>
+<li>Total:成交额</li>
+</ul>
+<h4 id="tradebuysell-买卖页面字段和功能">Trade:Buy/Sell-买/卖页面字段和功能`</h4>
+<p>导航切换</p>
+<blockquote>
+<p>limit：限价 单<br>
+Stop limit:限价止赢止损</p>
+</blockquote>
+<h4 id="limit限价单买入">limit限价单买入</h4>
+<ul>
+<li>Price:限价买入价格，可以输入，可以用^和V调整；</li>
+<li>Amount:购买数量</li>
+<li>Total:成交额（可以使用调节杆调整）<br>
+（下单时可以输入购买数量，也可以使用成交额，根据价格换算出数量）</li>
+<li>Avbl:钱包账户余额可用（USDT）</li>
+<li>MAX Buy：最多购买RWAY的数量</li>
+<li>EST fee:预估手续费（USDT）</li>
+<li>Fee level:Maker挂单0.1%；Taker吃单0.1%<br>
+（后台配置，对所有资产有效）</li>
+</ul>
+<h4 id="limit限价单卖出">limit限价单卖出</h4>
+<p>字段数据和买入一致，只是成交方向相反</p>
+<h4 id="tpsl选项：limit限价单中买单卖单的止赢止损）">TP/SL选项：(limit限价单中买单/卖单的止赢止损）</h4>
+<h4 id="take-profit止赢">Take Profit:止赢</h4>
+<ul>
+<li>TP limit:输入限价止赢价格，止赢价格要高于市场价格</li>
+<li>选项</li>
+</ul>
+<blockquote>
+<p>offset%:根据相对于主订单价格的百分比变化设置止盈/止损价格。现货交易的涨跌幅和收益率相同。<br>
+pnl:根据预估盈亏设置止盈/止损价格</p>
+</blockquote>
+<h4 id="stop-loss止损">Stop Loss:止损</h4>
+<ul>
+<li>SL Trigger:限价止损</li>
+<li>选项</li>
+</ul>
+<blockquote>
+<p>offset%:根据相对于主订单价格的百分比变化设置止盈/止损价格。现货交易的涨跌幅和收益率相同。<br>
+pnl:根据预估盈亏设置止盈/止损价格</p>
+</blockquote>
+<h3 id="注意：止赢止损的买单和卖单字段一致，控制方向相反">注意：止赢止损的买单和卖单字段一致，控制方向相反</h3>
+<h4 id="stop-limit限价止赢止损">Stop limit:限价止赢止损</h4>
+<p>限价止盈止损订单：当市场最新价达到触发价时，按预先设置的委托价格和数量自动下单。</p>
+<h4 id="buy：卖单sell卖单">Buy：卖单/Sell:卖单</h4>
+<ul>
+<li>Stop:出发价，输入出发价（USDT）</li>
+<li>Price:价格，输入价格（USDT）</li>
+<li>Amount：购买数量，输入购买RWAT数量</li>
+<li>Total:成交额，输入成交额，或者调节滑杆，换算出购买RWAT的数量</li>
+<li>Avbl:钱包账户余额可用（USDT）</li>
+<li>MAX Buy：最多购买RWAY的数量</li>
+<li>EST fee:预估手续费（USDT）</li>
+</ul>
+<h4 id="bbo下单">BBO下单</h4>
+<p>BBO 用于快速设置限价单价格，下单时使用 BBO 选项，系统会自动选择匹配的市场报价来执行订单。<br>
+选项：</p>
+<blockquote>
+<p>Counterparty 1 对手价1<br>
+Counterparty 5 对手价5<br>
+Queue 1 同向价1<br>
+Queue 5 同向价5</p>
+</blockquote>
+<h4 id="购买记录">购买记录</h4>
+<p>导航</p>
+<blockquote>
+<p>open orders（0）:当前委托<br>
+Order history:历史委托<br>
+Trade history:历史成交</p>
+</blockquote>
+<h4 id="当前委托列表字段数据">当前委托列表字段数据</h4>
+<ul>
+<li>Date:日期</li>
+<li>Pair:交易对</li>
+<li>Type:类型选项
+<blockquote>
+<p>All. 全部<br>
+Limit 限价单<br>
+Take profit  Limit 止赢<br>
+Stop loss Limit 止损</p>
+</blockquote>
+</li>
+<li>Side：选项</li>
+</ul>
+<blockquote>
+<p>All<br>
+Buy<br>
+Sell</p>
+</blockquote>
+<ul>
+<li>price:价格</li>
+<li>Amount：数量</li>
+<li>Cancel All:清除全部</li>
+</ul>
+<h4 id="历史委托列表字段数据">历史委托列表字段数据</h4>
+<ul>
+<li>搜索日期选项</li>
+</ul>
+<blockquote>
+<p>1 day<br>
+1 week<br>
+1 month<br>
+3 nonth</p>
+</blockquote>
+<ul>
+<li>Time:日期选项2026-01-11…2026-01-12</li>
+<li>Search:搜索</li>
+<li>Reset:重置</li>
+<li>Order time:委托时间</li>
+<li>Pair:交易对</li>
+<li>Type:同上</li>
+<li>Side：同上</li>
+<li>Average：平均价格</li>
+<li>Price:价格</li>
+<li>Executed:成交数量</li>
+<li>Amount:数量</li>
+<li>Total:成交额</li>
+</ul>
+<h4 id="历史成交列表字段数据">历史成交列表字段数据</h4>
+<ul>
+<li>Order number:订单号</li>
+<li>Date：日期</li>
+<li>Pair:交易对</li>
+<li>Side:交易方向</li>
+<li>Price:价格</li>
+<li>Executed:成交数量</li>
+<li>Fee:手续费</li>
+<li>Total in USDT:总计（USDT）</li>
+</ul>
+<hr>
+<h2 id="关于资金的流向和定义：1、withdraw：铸造的代币发行方可以提现到钱包，用withdraw功能，全部数量提现，收取usdt作为铸造费，不分批提现，发行方是做市商2、propele使用预售功能页提交代币预售信息，第一优先级别系统默认最少x总数代币上预售市场，x后台对所有资产统一配置，在pressale提交页的引导流动性默认beac，提交后入beac金库或者给交易机器人（吕工确定），如果用户选择usdt入usdt金库，在预售环节，避免房产代币全部卖光机器人缺少rwat组流动性，预售环节增加了平台购买twat交给机器人的环节，平台工作人员人工转给机器人账户。3、撮合交易市场使用beac作为流动性进行交易，交易对是rwatbeac。用户的撮合市场交易账户可以充值：rwat代币；beac，usdt，三个充值分别入合约资金库，用户可以从撮合市场账户里提现rwat代币；beac，usdt；4、机器人交易说明：机器人控制大部分的房产代币，发行方控制小部分房产代币，即使发行方在撮合交易市场上全部出售的房产代币，套现的资金额远远小于其缴纳的引导流动性。机器人挂卖单的价格要克设置，卖单数量可以设置，交易频率可以设置。--初始机器人交易机器人交易策略配置：为每一项资产配置交易机器人，配置项目有挂单价格梯度和数量，吃单价格梯度和数量，撤单价格梯度和数量，交易频率，交易深度"><code>关于资金的流向和定义：</code><br>
+<code>1、Withdraw：铸造的代币发行方可以提现到钱包，用withdraw功能，全部数量提现，收取USDT作为铸造费，不分批提现，发行方是做市商</code><br>
+<code>2、Propele:使用预售功能页提交代币预售信息，第一优先级别系统默认最少X%总数代币上预售市场，X%后台对所有资产统一配置，在pressale提交页的引导流动性默认BEAC，提交后入BEAC金库或者给交易机器人（吕工确定），如果用户选择USDT入USDT金库，在预售环节，避免房产代币全部卖光机器人缺少RWAT组流动性，预售环节增加了平台购买TWAT交给机器人的环节，平台工作人员人工转给机器人账户。</code><br>
+<code>3、撮合交易市场使用BEAC作为流动性进行交易，交易对是RWAT/BEAC。用户的撮合市场交易账户可以充值：RWAT代币；BEAC，USDT，三个充值分别入合约资金库，用户可以从撮合市场账户里提现RWAT代币；BEAC，USDT；</code>4、机器人交易说明：机器人控制大部分的房产代币，发行方控制小部分房产代币，即使发行方在撮合交易市场上全部出售的房产代币，套现的资金额远远小于其缴纳的引导流动性。机器人挂卖单的价格要克设置，卖单数量可以设置，交易频率可以设置。####  初始机器人交易<br>
+机器人交易策略配置：为每一项资产配置交易机器人，配置项目有挂单价格梯度和数量，吃单价格梯度和数量，撤单价格梯度和数量，交易频率，交易深度`</h2>
+<p>（6）Details<br>
+导航</p>
+<blockquote>
+<p>Tokenization<br>
+<strong>Financial</strong><br>
+<strong>Introduction</strong><br>
+<strong>Documents</strong><br>
+<strong>location</strong><br>
+<strong>Earnings Distributions</strong></p>
+</blockquote>
+<p>字段数据说明</p>
+<ul>
+<li>Total Supply：不重复描述</li>
+<li>Tokenized property value：不重复描述</li>
+<li>Circulating Supply（RWAT）：当前市场上流通的代币数量（统计不在钱包里的数量）</li>
+<li><strong>Current Price(USDT/RWAT)</strong>：定时刷新获取代币当前价格，刷新频率后台确定</li>
+<li>Market Cap (USD)：市值，用USD计价</li>
+<li><strong>Current Holders</strong>：统计钱包内持有代币人的总量</li>
+<li><strong>Holdings / Total</strong>：统计钱包内持有代币总量占总发行量的比例</li>
+<li>剩余的字段等同于presale market的Details数据，不重复描述。</li>
+</ul>
+<h3 id="、my-investment字段和数据功能">3、My Investment字段和数据功能</h3>
+<p>这是投资者的投资清单（列表）入口，注意：这个数据列表投资者数据是全部投资数据，不区分投资是preasle market还是open market<br>
+（1）列表的字段和数据描述</p>
+<ul>
+<li>Symbol:代币符号,数据来源于代币铸造</li>
+<li>Asset Name:代币名称，数据来源于代币铸造</li>
+<li>Shares Held（RWAT）:这是统计投资者购买代币存放在钱包里<br>
+的数量，是钱包累积，计算收益分配比例使用这个数值</li>
+<li>% held:     投资者钱包持有代币的比例，是钱包的累积，计算收益分配使用这个数据。</li>
+<li>Spent(USDT):投资某一项资产总共花费的USDT,这个数据对应于投资者钱包里持有代币的数量计算。</li>
+<li>clain earnings(BEAC):这是投资者领取的房产租金收益，用BEAC，</li>
+<li>Redemption(USDT):这是投资者赎回自己的投资数量，用USDT。注意计算投资者赎回投资所一句的代币数量以钱包内持有的代币数量为一举计算。</li>
+<li>Redemption Date：投资者赎回投资的日期</li>
+<li>Contract：这是资产的合约地址，便于用户点击跳转到区块链浏览器查看<br>
+（2）Action：操作</li>
+<li>Claim:领取按键，包含两个子操作菜单</li>
+</ul>
+<blockquote>
+<p>Tokens<br>
+Earnings</p>
+</blockquote>
+<p>Tokens:这是给投资者领取预售代币的入口，如果预售未到期或者投资者没有参与预售，这个按键置灰色不可操作预售期限到期，投资者领回代币（RWAT**，星号表示编号）。<br>
+Earnings:这是投资者领取房产租金收益的入口，这个功能按钮置灰色，只有平台从后台存入资金，触发通知公告，持币者按照持币股份领取租金收益，持币者领取的Earnings使用BEAC。</p>
+<ul>
+<li>Redeem:投资者赎回投资的入口，允许投资者钱包里持有的代币参与赎回。赎回是项目清盘下架的情形，这个按键是否可用分以下情形：</li>
+</ul>
+<blockquote>
+<p>（1）代币预售期限未到期内购买的代币，不允许投资者赎回，这是第一优先级<br>
+（2）投资者在预售市场和二级开放市场购买的代币是否可以赎回，由后台控制开关状态决定（平台根据实际情况用开关控制是否允许投资者赎回自己的投资）这个开关加在每一项资产上面独立控制该资产的赎回权限<br>
+（3）赎回的价格：是代币预售时的发行价格。投资者赎回投资的币种采用USDT</p>
+</blockquote>
+<h2 id="governance-pool治理池">Governance pool治理池</h2>
+<h3 id="首页-1">首页</h3>
+<p>1、数据展示</p>
+<ul>
+<li>Market cap:市值，美元计价，定期（1min）刷新数据,统计增长率</li>
+<li>Curent price:BAS 的当前价格，定期刷新（1min）统计增长率</li>
+<li>Circulating supply:循环供应量</li>
+<li>Earnings rate:赚钱增长率</li>
+<li>total wallets staking:参与质押的钱包数</li>
+<li>Total value locked:TVL 指总锁定价值</li>
+<li>TVL的图标统计展示</li>
+</ul>
+<p>2、功能<br>
+（1）Stake:质押:从投资者钱包拿BAS</p>
+<ul>
+<li>Select lock period(months):选择质押期限和奖励倍率：</li>
+</ul>
+<blockquote>
+<p>No lock.      1x<br>
+3.                    1.5x<br>
+6                   2x<br>
+12                3x<br>
+24.     4x<br>
+36.    5.5x<br>
+48.     7x<br>
+60.    10x</p>
+</blockquote>
+<ul>
+<li>Stake BAS</li>
+<li>Mint sBAS</li>
+</ul>
+<p>（2）Claim:领取奖励：投资者把BSA奖励领取到投资者钱包</p>
+<p>（3）Redeem:赎回质押：投资者销毁sBAS,赎回质押的BAS<br>
+（4）Restaking：重新质押<br>
+3、My Investments</p>
+<ul>
+<li><strong>Lock-up Status</strong>：锁定期</li>
+<li><strong>Lock start</strong>：锁定开始日期</li>
+<li><strong>Lock end</strong>：锁定期结束</li>
+<li>Lock-up Period（Days）：锁定周期</li>
+<li><strong>Share boost</strong>：获奖倍率</li>
+<li><strong>Staked Amount</strong>：质押数量</li>
+<li>Mint sBAS：铸造的sBAS</li>
+<li>Your share:持有的股份</li>
+<li>Earnings Rate：赚钱速率</li>
+<li><strong>Claimed (BAS)</strong>：领取的奖励</li>
+<li><strong>Redeemed</strong>**(BAS)**：赎回的本金</li>
+<li><strong>Claim Date</strong>：领取奖励日期</li>
+<li><strong>Redemption Date</strong>：赎回投资日期</li>
+</ul>
+<h2 id="liquidity-pool治理池">Liquidity pool治理池</h2>
+<p>1、数据展示</p>
+<ul>
+<li>Total Value Locked:总锁定价值</li>
+<li>Earnings Rate：赚钱速率</li>
+<li>Total Wallets Staking：总的质押钱包</li>
+</ul>
+<p>2、功能<br>
+（1）Stake LP:质押:从投资者钱包拿LP</p>
+<ul>
+<li>Select lock period(months):选择质押期限和奖励倍率：</li>
+</ul>
+<blockquote>
+<p>No lock.      1x<br>
+3.                    1.5x<br>
+6                   2x<br>
+12                3x<br>
+24.     4x<br>
+36.    5.5x<br>
+48.     7x<br>
+60.    10x</p>
+</blockquote>
+<ul>
+<li>Stake LP</li>
+</ul>
+<p>（2）Claim:领取奖励：投资者把BSA奖励领取到投资者钱包<br>
+（3）Redeem:赎回质押：投资者赎回LP。<br>
+（4）Restaking：重新质押<br>
+3、My Investments(类似于goverhance pool,略)</p>
+</div>
+</body>
+
+</html>
