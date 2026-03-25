@@ -12,6 +12,10 @@ npm install -g uipro-cli
 uipro init --ai cursor
 ```
 
+## tailwind备忘录
+
+`grid grid-cols-3 gap-4`等同于flex下有三个元素同等分3份。如果4个元素，那么第四个元素就换行了。
+
 
 
 

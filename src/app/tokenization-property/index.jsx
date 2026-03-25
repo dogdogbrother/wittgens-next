@@ -7,13 +7,8 @@ import { Input } from '../../components/ui/input'
 import { Label } from '../../components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select'
 import { countries, getCountryByPhonePrefix } from '../../utils/countries'
-
-// 将 iconify icon name 包装成 React 组件，兼容 SectionCard（size prop）和 tabs
-const iconify = (name) => {
-  const Comp = ({ size, ...props }) => <Icon icon={name} width={size} height={size} {...props} />
-  Comp.displayName = name
-  return Comp
-}
+import PropertySection from './components/PropertySection'
+import { iconify } from './utils.jsx'
 
 const TABS = [
   { id: 'issuer',            label: 'Issuer',            icon: iconify('material-symbols:deployed-code-account-outline') },
@@ -135,6 +130,106 @@ function IssuerSection({ formData, onChange, errors }) {
   )
 }
 
+function MintTokenSection() {
+  const [form, setForm] = useState({ tokenName: '', tokenSymbol: '', expectedSupply: '' })
+  const set = (field, val) => setForm(p => ({ ...p, [field]: val }))
+
+  return (
+    <SectionCard id="mint-token" icon={TABS[2].icon} title="Mint Token" className="mb-8">
+      <div className="py-4">
+        <div className="grid grid-cols-3 gap-6">
+          <FieldGroup label="Token name" required>
+            <Input
+              placeholder="RWAT-PRO-*"
+              value={form.tokenName}
+              onChange={e => set('tokenName', e.target.value)}
+            />
+          </FieldGroup>
+          <FieldGroup label="Token Symbol" required>
+            <Input
+              placeholder="RWAT"
+              value={form.tokenSymbol}
+              onChange={e => set('tokenSymbol', e.target.value)}
+            />
+          </FieldGroup>
+          <FieldGroup label="Expected Token Supply" required>
+            <Input
+              placeholder="10,00,000"
+              value={form.expectedSupply}
+              onChange={e => set('expectedSupply', e.target.value)}
+            />
+          </FieldGroup>
+        </div>
+      </div>
+    </SectionCard>
+  )
+}
+
+function PropertyDocumentSection() {
+  const [uploadedFiles, setUploadedFiles] = useState([])
+
+  const handleFileUpload = (e) => {
+    const files = Array.from(e.target.files)
+    setUploadedFiles(prev => [...prev, ...files.map(f => ({ name: f.name, type: f.type }))])
+  }
+
+  const handleDeleteFile = (index) => {
+    setUploadedFiles(prev => prev.filter((_, i) => i !== index))
+  }
+
+  return (
+    <SectionCard id="property-document" icon={TABS[3].icon} title="Property Document" className="mb-8">
+      <div className="pt-6 pb-4">
+        <div className="flex gap-4 items-start">
+          {/* 左侧：上传按钮 */}
+          <div className="w-64 flex-shrink-0">
+            <label className="inline-flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-md cursor-pointer hover:bg-gray-50 mb-4 transition-colors">
+              <Icon icon="mdi:upload" width={20} height={20} />
+              <span className="text-sm">Upload Files</span>
+              <input
+                type="file"
+                multiple
+                accept=".pdf,.jpg,.jpeg,.png"
+                onChange={handleFileUpload}
+                className="hidden"
+              />
+            </label>
+            <p className="text-xs" style={{ color: '#555C70' }}>
+              Upload your property photos and legal documents.<br />
+              Supported formats: PDF, JPEG, PNG
+            </p>
+          </div>
+
+          <div className="self-stretch w-px bg-gray-200 mr-2 flex-shrink-0" />
+
+          {/* 右侧：文件列表 */}
+          <div className="flex-1 grid grid-cols-3 gap-4">
+            {uploadedFiles.map((file, index) => (
+              <div
+                key={index}
+                className="h-8 border border-[#D0E2EA] rounded p-3 flex items-center justify-between"
+                style={{ background: 'rgba(221,243,254,0.48)' }}
+              >
+                <span className="text-sm text-[#00032A] truncate flex-1">{file.name}</span>
+                <div className="flex items-center gap-2 ml-2 flex-shrink-0">
+                  <button className="text-xs text-blue-600 underline hover:text-blue-800 bg-transparent border-none cursor-pointer">Preview</button>
+                  <button
+                    onClick={() => handleDeleteFile(index)}
+                    className="w-8 h-8 rounded flex items-center justify-center bg-transparent border-none cursor-pointer transition-colors"
+                    style={{ color: '#E04141' }}
+                  >
+                    <Icon icon="mdi:trash-can-outline" width={20} height={20} />
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </SectionCard>
+  )
+}
+
 function StubSection({ id, icon, title }) {
   return (
     <SectionCard id={id} icon={icon} title={title} className="mb-8">
@@ -223,9 +318,9 @@ export default function TokenizationProperty() {
 
       {/* Sections */}
       <IssuerSection formData={formData} onChange={handleChange} errors={errors} />
-      <StubSection id="property"          icon={TABS[1].icon} title="Property" />
-      <StubSection id="mint-token"        icon={TABS[2].icon} title="Mint Token" />
-      <StubSection id="property-document" icon={FileText} title="Property Document" />
+      <PropertySection />
+      <MintTokenSection />
+      <PropertyDocumentSection />
       <StubSection id="property-photos"   icon={Image}    title="Property Photos" />
       <StubSection id="invitation-code"   icon={Gift}     title="Invitation code" />
     </div>
