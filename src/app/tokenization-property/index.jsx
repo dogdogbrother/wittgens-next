@@ -1,4 +1,6 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
+import { uploadDocuments, uploadImages, submitProject } from '../../utils/tokenizationApi'
+import { getCountryByCode } from '../../utils/countries'
 import { FileText, Image, Gift } from 'lucide-react'
 import { Icon } from '@iconify/react'
 import BackButton from '../../components/BackButton'
@@ -7,8 +9,37 @@ import { Input } from '../../components/ui/input'
 import { Label } from '../../components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select'
 import { countries, getCountryByPhonePrefix } from '../../utils/countries'
+import { useAuthStore } from '../../store/useAuthStore'
 import PropertySection from './components/PropertySection'
 import { iconify } from './utils.jsx'
+
+// 简单 Toast 组件
+function Toast({ message, type = 'error', onClose }) {
+  useEffect(() => {
+    const t = setTimeout(onClose, 4000)
+    return () => clearTimeout(t)
+  }, [onClose])
+  const bg = type === 'success' ? '#22c55e' : '#ef4444'
+  const icon = type === 'success' ? 'mdi:check-circle' : 'mdi:alert-circle'
+  return (
+    <div
+      style={{
+        position: 'fixed', top: '24px', right: '24px', zIndex: 9999,
+        display: 'flex', alignItems: 'center', gap: '10px',
+        background: '#fff', border: `1px solid ${bg}`, borderLeft: `4px solid ${bg}`,
+        borderRadius: '8px', padding: '12px 16px', minWidth: '280px', maxWidth: '420px',
+        boxShadow: '0 4px 16px rgba(0,0,0,0.12)', fontFamily: 'Inter, sans-serif',
+        animation: 'slideIn 0.2s ease',
+      }}
+    >
+      <Icon icon={icon} width={20} height={20} style={{ color: bg, flexShrink: 0 }} />
+      <span style={{ fontSize: '14px', color: '#1e293b', flex: 1 }}>{message}</span>
+      <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#94a3b8', padding: 0 }}>
+        <Icon icon="mdi:close" width={16} height={16} />
+      </button>
+    </div>
+  )
+}
 
 const TABS = [
   { id: 'issuer',            label: 'Issuer',            icon: iconify('material-symbols:deployed-code-account-outline') },
@@ -165,54 +196,60 @@ function MintTokenSection({ form, onChange, errors = {} }) {
   )
 }
 
-function PropertyDocumentSection() {
-  const [uploadedFiles, setUploadedFiles] = useState([])
+function PropertyDocumentSection({ files, onChange, error, showToast }) {
+  const [uploading, setUploading] = useState(false)
 
-  const handleFileUpload = (e) => {
-    const files = Array.from(e.target.files)
-    setUploadedFiles(prev => [...prev, ...files.map(f => ({ name: f.name, type: f.type }))])
+  const handleFileUpload = async (e) => {
+    const selected = Array.from(e.target.files)
+    if (!selected.length) return
+    e.target.value = ''
+    if (!useAuthStore.getState().token) { showToast('Please connect your wallet first'); return }
+    setUploading(true)
+    try {
+      const raw = await uploadDocuments(selected)
+      const results = Array.isArray(raw) ? raw : (raw ? [raw] : [])
+      const newItems = results.map(r => ({ name: r.fileName, fileUrl: r.fileUrl }))
+      onChange('documents', [...files, ...newItems])
+    } catch (err) {
+      showToast(err.message || 'Document upload failed')
+    } finally {
+      setUploading(false)
+    }
   }
 
   const handleDeleteFile = (index) => {
-    setUploadedFiles(prev => prev.filter((_, i) => i !== index))
+    onChange('documents', files.filter((_, i) => i !== index))
   }
 
   return (
     <SectionCard id="property-document" icon={TABS[3].icon} title="Property Document" className="mb-8">
       <div className="pt-6 pb-4">
         <div className="flex gap-4 items-start">
-          {/* 左侧：上传按钮 */}
-          <div className="w-64 flex-shrink-0">
-            <label className="inline-flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-md cursor-pointer hover:bg-gray-50 mb-4 transition-colors">
-              <Icon icon="mdi:upload" width={20} height={20} />
-              <span className="text-sm">Upload Files</span>
-              <input
-                type="file"
-                multiple
-                accept=".pdf,.jpg,.jpeg,.png"
-                onChange={handleFileUpload}
-                className="hidden"
-              />
+          <div className="w-64 shrink-0">
+            <label className={`inline-flex items-center gap-2 px-4 py-2 border rounded-md mb-4 transition-colors ${uploading ? 'cursor-not-allowed opacity-60' : 'cursor-pointer hover:bg-gray-50'} ${error ? 'border-red-500' : 'border-gray-300'}`}>
+              <Icon icon={uploading ? 'mdi:loading' : 'mdi:upload'} width={20} height={20} className={uploading ? 'animate-spin' : ''} />
+              <span className="text-sm">{uploading ? 'Uploading...' : 'Upload Files'}</span>
+              <input type="file" multiple accept=".pdf,.jpg,.jpeg,.png" onChange={handleFileUpload} disabled={uploading} className="hidden" />
             </label>
             <p className="text-xs" style={{ color: '#555C70' }}>
-              Upload your property photos and legal documents.<br />
-              Supported formats: PDF, JPEG, PNG
+              Upload your property documents.<br />
+              Supported formats: PDF only. Max 10 files, 20MB each.
             </p>
+            {error && <p className="text-red-500 text-xs mt-2">{error}</p>}
           </div>
 
-          <div className="self-stretch w-px bg-gray-200 mr-2 flex-shrink-0" />
+          <div className="self-stretch w-px bg-gray-200 mr-2 shrink-0" />
 
-          {/* 右侧：文件列表 */}
           <div className="flex-1 grid grid-cols-3 gap-4">
-            {uploadedFiles.map((file, index) => (
+            {files.map((file, index) => (
               <div
                 key={index}
                 className="h-8 border border-[#D0E2EA] rounded p-3 flex items-center justify-between"
                 style={{ background: 'rgba(221,243,254,0.48)' }}
               >
                 <span className="text-sm text-[#00032A] truncate flex-1">{file.name}</span>
-                <div className="flex items-center gap-2 ml-2 flex-shrink-0">
-                  <button className="text-xs text-blue-600 underline hover:text-blue-800 bg-transparent border-none cursor-pointer">Preview</button>
+                <div className="flex items-center gap-2 ml-2 shrink-0">
+                  <a href={file.fileUrl} target="_blank" rel="noreferrer" className="text-xs text-blue-600 underline hover:text-blue-800">Preview</a>
                   <button
                     onClick={() => handleDeleteFile(index)}
                     className="w-8 h-8 rounded flex items-center justify-center bg-transparent border-none cursor-pointer transition-colors"
@@ -230,14 +267,26 @@ function PropertyDocumentSection() {
   )
 }
 
-function PropertyPhotosSection() {
-  const [photos, setPhotos] = useState([])
+function PropertyPhotosSection({ photos, onChange, error, showToast }) {
   const [selected, setSelected] = useState(new Set())
+  const [uploading, setUploading] = useState(false)
 
-  const handleUpload = (e) => {
-    const files = Array.from(e.target.files)
-    const newPhotos = files.map(f => ({ url: URL.createObjectURL(f), name: f.name }))
-    setPhotos(prev => [...prev, ...newPhotos])
+  const handleUpload = async (e) => {
+    const selected = Array.from(e.target.files)
+    if (!selected.length) return
+    e.target.value = ''
+    if (!useAuthStore.getState().token) { showToast('Please connect your wallet first'); return }
+    setUploading(true)
+    try {
+      const raw = await uploadImages(selected)
+      const results = Array.isArray(raw) ? raw : (raw ? [raw] : [])
+      const newPhotos = results.map(r => ({ name: r.fileName, fileUrl: r.fileUrl }))
+      onChange('photos', [...photos, ...newPhotos])
+    } catch (err) {
+      showToast(err.message || 'Photo upload failed')
+    } finally {
+      setUploading(false)
+    }
   }
 
   const toggleSelect = (index) => {
@@ -249,15 +298,12 @@ function PropertyPhotosSection() {
   }
 
   const toggleSelectAll = (e) => {
-    if (e.target.checked) {
-      setSelected(new Set(photos.map((_, i) => i)))
-    } else {
-      setSelected(new Set())
-    }
+    if (e.target.checked) setSelected(new Set(photos.map((_, i) => i)))
+    else setSelected(new Set())
   }
 
   const handleDelete = () => {
-    setPhotos(prev => prev.filter((_, i) => !selected.has(i)))
+    onChange('photos', photos.filter((_, i) => !selected.has(i)))
     setSelected(new Set())
   }
 
@@ -293,14 +339,14 @@ function PropertyPhotosSection() {
         <div className="grid gap-3" style={{ gridTemplateColumns: 'repeat(8, 1fr)' }}>
           {/* 上传格 */}
           <label
-            className="flex flex-col items-center justify-center gap-2 border border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-[#0D6EC0] hover:bg-blue-50 transition-colors"
+            className={`flex flex-col items-center justify-center gap-2 border border-dashed rounded-lg transition-colors ${uploading ? 'cursor-not-allowed opacity-60' : 'cursor-pointer hover:border-[#0D6EC0] hover:bg-blue-50'} ${error ? 'border-red-400' : 'border-gray-300'}`}
             style={{ aspectRatio: '1', padding: '12px' }}
           >
-            <Icon icon="mdi:upload" width={28} height={28} style={{ color: '#94a3b8' }} />
-            <span className="text-xs text-center leading-tight" style={{ color: '#94a3b8' }}>
-              Upload your property photos. Supported formats include PDF, JPEG, PNG
+            <Icon icon={uploading ? 'mdi:loading' : 'mdi:upload'} width={28} height={28} className={uploading ? 'animate-spin' : ''} style={{ color: error ? '#f87171' : '#94a3b8' }} />
+            <span className="text-xs text-center leading-tight" style={{ color: error ? '#f87171' : '#94a3b8' }}>
+              {uploading ? 'Uploading...' : (error || 'Upload your property photos.\nJPG, JPEG, PNG, WebP')}
             </span>
-            <input type="file" multiple accept=".jpg,.jpeg,.png,.pdf" onChange={handleUpload} className="hidden" />
+            <input type="file" multiple accept=".jpg,.jpeg,.png,.webp" onChange={handleUpload} disabled={uploading} className="hidden" />
           </label>
 
           {/* 已上传图片 */}
@@ -315,7 +361,7 @@ function PropertyPhotosSection() {
               }}
               onClick={() => toggleSelect(index)}
             >
-              <img src={photo.url} alt={photo.name} className="w-full h-full object-cover" />
+              <img src={photo.fileUrl} alt={photo.name} className="w-full h-full object-cover" />
               <div
                 className="absolute top-1.5 left-1.5"
                 onClick={e => { e.stopPropagation(); toggleSelect(index) }}
@@ -368,6 +414,8 @@ const INITIAL_FORM = {
   commercialType: 'retail', useOfProceeds: 'construction_funds', tokenizationOptions: 'for_sale', expectedValuation: '', description: '',
   // Mint Token
   tokenName: '', tokenSymbol: '', expectedSupply: '',
+  // Files
+  documents: [], photos: [],
   // Invitation
   invitationCode: '',
 }
@@ -394,6 +442,9 @@ function validate(form) {
   if (!form.tokenName.trim())     e.tokenName     = 'Token name is required'
   if (!form.tokenSymbol.trim())   e.tokenSymbol   = 'Token symbol is required'
   if (!form.expectedSupply.trim()) e.expectedSupply = 'Expected token supply is required'
+  // Files
+  if (!form.documents.length) e.documents = 'Please upload at least one document'
+  if (!form.photos.length)    e.photos    = 'Please upload at least one photo'
   return e
 }
 
@@ -436,32 +487,94 @@ export default function TokenizationProperty() {
     setErrors({})
   }
 
-  const handleSubmit = () => {
+  const [submitting, setSubmitting] = useState(false)
+  const [toast, setToast] = useState(null)
+  const showToast = useCallback((message, type = 'error') => setToast({ message, type }), [])
+
+  const scrollToFirstError = (errs) => {
+    const issuerFields = ['firstName', 'lastName', 'email', 'phoneNumber']
+    const propertyFields = ['streetAddress', 'city', 'lifecycleStage', 'propertySize', 'propertyAge', 'commercialType', 'useOfProceeds', 'tokenizationOptions', 'expectedValuation']
+    const mintFields = ['tokenName', 'tokenSymbol', 'expectedSupply']
+    const fieldSection = {
+      ...Object.fromEntries(issuerFields.map(f => [f, 'issuer'])),
+      ...Object.fromEntries(propertyFields.map(f => [f, 'property'])),
+      ...Object.fromEntries(mintFields.map(f => [f, 'mint-token'])),
+      documents: 'property-document',
+      photos: 'property-photos',
+    }
+    const target = fieldSection[Object.keys(errs)[0]]
+    if (target) {
+      setActiveTab(target)
+      isScrollingByClick.current = true
+      scrollTo(target)
+      setTimeout(() => { isScrollingByClick.current = false }, 800)
+    }
+  }
+
+  const handleSubmit = async () => {
     const errs = validate(formData)
     if (Object.keys(errs).length > 0) {
       setErrors(errs)
-      // 滚动到第一个出错的 section
-      const sectionOrder = ['issuer', 'property', 'mint-token']
-      const issuerFields = ['firstName', 'lastName', 'email', 'phoneNumber']
-      const propertyFields = ['streetAddress', 'city', 'lifecycleStage', 'propertySize', 'propertyAge', 'commercialType', 'useOfProceeds', 'tokenizationOptions', 'expectedValuation']
-      const mintFields = ['tokenName', 'tokenSymbol', 'expectedSupply']
-      const fieldSection = { ...Object.fromEntries(issuerFields.map(f => [f, 'issuer'])), ...Object.fromEntries(propertyFields.map(f => [f, 'property'])), ...Object.fromEntries(mintFields.map(f => [f, 'mint-token'])) }
-      const firstErrField = Object.keys(errs)[0]
-      const targetSection = fieldSection[firstErrField]
-      if (targetSection) {
-        setActiveTab(targetSection)
-        isScrollingByClick.current = true
-        scrollTo(targetSection)
-        setTimeout(() => { isScrollingByClick.current = false }, 800)
-      }
+      scrollToFirstError(errs)
       return
     }
-    console.log('Submit:', formData)
-    alert('Submitted successfully!')
+
+    setSubmitting(true)
+    try {
+      // 文档和图片已在选择时上传，直接使用 fileUrl
+      // 组装 payload
+      const countryInfo = getCountryByCode(formData.country)
+      const areaUnit = formData.propertySizeUnit === 'ft²' ? 'ft' : 'm'
+
+      const payload = {
+        issuer: {
+          firstName:   formData.firstName,
+          lastName:    formData.lastName,
+          email:       formData.email,
+          phoneCode:   formData.phoneCountry,
+          phone:       formData.phoneNumber,
+          institution: formData.institution,
+        },
+        property: {
+          countryCode:   formData.country,
+          country:       countryInfo?.name || formData.country,
+          street:        formData.streetAddress,
+          unit:          formData.apt,
+          city:          formData.city,
+          region:        formData.province,
+          postal:        formData.postalCode,
+          location:      [formData.city, countryInfo?.name].filter(Boolean).join(', '),
+          area:          formData.propertySize,
+          areaUnit,
+          stage:         formData.lifecycleStage,
+          age:           formData.propertyAge,
+          propertyType:  formData.commercialType,
+          useOfProceeds: formData.useOfProceeds,
+          valuation:     formData.expectedValuation,
+          description:   formData.description,
+        },
+        mintToken: {
+          tokenName:   formData.tokenName,
+          tokenSymbol: formData.tokenSymbol,
+          supply:      formData.expectedSupply,
+        },
+        documents: formData.documents.map(d => d.fileUrl),
+        photos:    formData.photos.map(p => p.fileUrl),
+        remark:    formData.invitationCode,
+      }
+
+      await submitProject(payload)
+      showToast('Submitted successfully!', 'success')
+    } catch (err) {
+      showToast(err.message || 'Submission failed, please try again.')
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   return (
     <div className="min-h-screen pb-16" style={{ padding: '0 24px 64px' }}>
+      {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
       <div className="py-3">
         <BackButton />
       </div>
@@ -501,8 +614,8 @@ export default function TokenizationProperty() {
       <IssuerSection formData={formData} onChange={handleChange} errors={errors} />
       <PropertySection form={formData} onChange={handleChange} errors={errors} />
       <MintTokenSection form={formData} onChange={handleChange} errors={errors} />
-      <PropertyDocumentSection />
-      <PropertyPhotosSection />
+      <PropertyDocumentSection files={formData.documents} onChange={handleChange} error={errors.documents} showToast={showToast} />
+      <PropertyPhotosSection photos={formData.photos} onChange={handleChange} error={errors.photos} showToast={showToast} />
       <InvitationCodeSection value={formData.invitationCode} onChange={handleChange} />
 
       {/* 底部按钮 */}
@@ -522,16 +635,18 @@ export default function TokenizationProperty() {
         </button>
         <button
           onClick={handleSubmit}
-          onMouseEnter={e => e.currentTarget.style.background = 'linear-gradient(90deg, #1465AA 0%, #005298 100%)'}
-          onMouseLeave={e => e.currentTarget.style.background = 'linear-gradient(90deg, #3D81BC 0%, #096CC0 100%)'}
+          disabled={submitting}
+          onMouseEnter={e => { if (!submitting) e.currentTarget.style.background = 'linear-gradient(90deg, #1465AA 0%, #005298 100%)' }}
+          onMouseLeave={e => { if (!submitting) e.currentTarget.style.background = 'linear-gradient(90deg, #3D81BC 0%, #096CC0 100%)' }}
           style={{
             width: '180px', height: '44px', borderRadius: '8px', border: 'none',
-            background: 'linear-gradient(90deg, #3D81BC 0%, #096CC0 100%)',
-            color: '#fff', fontSize: '16px', fontWeight: 500, cursor: 'pointer',
+            background: submitting ? '#94a3b8' : 'linear-gradient(90deg, #3D81BC 0%, #096CC0 100%)',
+            color: '#fff', fontSize: '16px', fontWeight: 500,
+            cursor: submitting ? 'not-allowed' : 'pointer',
             fontFamily: 'Inter, sans-serif', transition: 'background 150ms',
           }}
         >
-          Submit
+          {submitting ? 'Submitting...' : 'Submit'}
         </button>
       </div>
     </div>
