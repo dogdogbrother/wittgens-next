@@ -14,3 +14,4 @@ export const countries = [
 
 export const getCountryByPhonePrefix = (prefix) => countries.find(c => c.phonePrefix === prefix)
 export const getCountryByName = (name) => countries.find(c => c.name === name)
+export const getCountryByCode = (code) => countries.find(c => c.code === code)

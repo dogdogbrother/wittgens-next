@@ -4,29 +4,30 @@ import SectionCard from '../../../components/SectionCard'
 import { Input } from '../../../components/ui/input'
 import { Label } from '../../../components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../../components/ui/select'
-import { countries, getCountryByName } from '../../../utils/countries'
+import { countries, getCountryByCode } from '../../../utils/countries'
 import PropertyMap from './PropertyMap'
 import { iconify } from '../utils.jsx'
 
-// 通用 field 包装
-function Field({ label, required, error, children, className = '' }) {
+function Field({ label, required, error, children, className = '', bordered = false }) {
   return (
-    <div className={`space-y-1 ${className}`}>
+    <div
+      className={`space-y-1 ${className}`}
+      style={bordered ? { borderLeft: '3px solid #D0E2EA', paddingLeft: '10px' } : undefined}
+    >
       {label && (
         <Label>
           {label} {required && <span className="text-red-500">*</span>}
         </Label>
       )}
       {children}
-      {error && <p className="text-red-500 text-xs">{error}</p>}
+      <p className="text-red-500 text-xs min-h-[16px]">{error || '\u00A0'}</p>
     </div>
   )
 }
 
-// 单选按钮组
 function RadioGroup({ name, options, value, onChange }) {
   return (
-    <div className="flex items-center gap-3 flex-wrap mt-2">
+    <div className="flex items-center gap-3 flex-nowrap mt-2">
       {options.map((opt) => (
         <label key={opt.value} className="flex items-center gap-1.5 cursor-pointer text-sm" style={{ color: '#555C70' }}>
           <input
@@ -46,34 +47,16 @@ function RadioGroup({ name, options, value, onChange }) {
 
 const PropertyIcon = iconify('tabler:home-eco')
 
-export default function PropertySection() {
+export default function PropertySection({ form, onChange, errors = {} }) {
   const [mapOnTop, setMapOnTop] = useState(false)
   const [mapCenter, setMapCenter] = useState(null)
   const [geocoding, setGeocoding] = useState(false)
-  const [form, setForm] = useState({
-    country: 'Switzerland',
-    streetAddress: '',
-    apt: '',
-    city: '',
-    province: '',
-    postalCode: '',
-    lifecycleStage: '',
-    propertySize: '',
-    propertySizeUnit: 'ft²',
-    propertyAge: '',
-    commercialType: '',
-    useOfProceeds: '',
-    tokenizationOptions: '',
-    expectedValuation: '',
-    description: '',
-  })
-  const [errors, setErrors] = useState({})
 
-  const set = (field, val) => setForm(p => ({ ...p, [field]: val }))
+  const set = (field, val) => onChange(field, val)
 
-  // 用 Nominatim (OpenStreetMap) 免费 geocoding
   const geocodeAddress = async () => {
-    const addr = [form.streetAddress, form.city, form.province, form.country].filter(Boolean).join(', ')
+    const countryName = getCountryByCode(form.country)?.name || form.country
+    const addr = [form.streetAddress, form.city, form.province, countryName].filter(Boolean).join(', ')
     if (!addr) return
     setGeocoding(true)
     try {
@@ -97,27 +80,25 @@ export default function PropertySection() {
   const MapBlock = (
     <PropertyMap
       center={mapCenter}
-      style={{ height: mapOnTop ? '360px' : '360px', minHeight: '300px' }}
+      style={mapOnTop ? { height: '360px' } : { height: '100%', minHeight: '200px' }}
     />
   )
 
-  // 地址字段（左绿框内容）
   const AddressBlock = (
     <div className="space-y-4">
       {EnterAddressBtn}
 
-      {/* Row 1: Country / Street address */}
       <div className="grid grid-cols-2 gap-6">
-        <Field label="Country/Region" required>
+        <Field label="Country/Region" required error={errors.country}>
           <Select value={form.country} onValueChange={(v) => set('country', v)}>
-            <SelectTrigger>
+            <SelectTrigger className={errors.country ? 'border-red-500' : ''}>
               <SelectValue>
                 {(() => {
-                  const c = getCountryByName(form.country)
+                  const c = getCountryByCode(form.country)
                   return (
                     <div className="flex items-center gap-2">
                       {c && <Icon icon={c.flagIcon} className="w-5 h-4 shrink-0" />}
-                      <span>{form.country}</span>
+                      <span>{c?.name || form.country}</span>
                     </div>
                   )
                 })()}
@@ -125,7 +106,7 @@ export default function PropertySection() {
             </SelectTrigger>
             <SelectContent>
               {countries.map((c) => (
-                <SelectItem key={c.code} value={c.name}>
+                <SelectItem key={c.code} value={c.code}>
                   <div className="flex items-center gap-2">
                     <Icon icon={c.flagIcon} className="w-5 h-4 shrink-0" />
                     <span>{c.name}</span>
@@ -135,22 +116,32 @@ export default function PropertySection() {
             </SelectContent>
           </Select>
         </Field>
-        <Field label="Street address" required>
-          <Input placeholder="Hauptstraße 25" value={form.streetAddress} onChange={e => set('streetAddress', e.target.value)} onBlur={geocodeAddress} />
+        <Field label="Street address" required error={errors.streetAddress}>
+          <Input
+            placeholder="Hauptstraße 25"
+            value={form.streetAddress}
+            onChange={e => set('streetAddress', e.target.value)}
+            onBlur={geocodeAddress}
+            className={errors.streetAddress ? 'border-red-500' : ''}
+          />
         </Field>
       </div>
 
-      {/* Row 2: Apt / City */}
       <div className="grid grid-cols-2 gap-6">
         <Field label="Apt, floor, bldg (if applicable)">
           <Input placeholder="5" value={form.apt} onChange={e => set('apt', e.target.value)} />
         </Field>
-        <Field label="City/town/village" required>
-          <Input placeholder="Aarau" value={form.city} onChange={e => set('city', e.target.value)} onBlur={geocodeAddress} />
+        <Field label="City/town/village" required error={errors.city}>
+          <Input
+            placeholder="Aarau"
+            value={form.city}
+            onChange={e => set('city', e.target.value)}
+            onBlur={geocodeAddress}
+            className={errors.city ? 'border-red-500' : ''}
+          />
         </Field>
       </div>
 
-      {/* Row 3: Province / Postal code */}
       <div className="grid grid-cols-2 gap-6">
         <Field label="Province/state/territory (if applicable)">
           <Input placeholder="Aargau" value={form.province} onChange={e => set('province', e.target.value)} />
@@ -162,30 +153,26 @@ export default function PropertySection() {
     </div>
   )
 
-  // 其余字段（红框下方全宽）
   const ExtraBlock = (
     <div className="space-y-4 mt-6">
-      {/* Row 4: 左半(Lifecycle/Size/Age) + 右半(Commercial Type) */}
       <div className="flex gap-8 items-start">
         <div className="flex-1 min-w-0 flex gap-4 justify-between">
-          <Field label="Lifecycle Stage" required>
+          <Field label="Lifecycle Stage" required error={errors.lifecycleStage} bordered>
             <RadioGroup
               name="lifecycleStage"
               value={form.lifecycleStage}
               onChange={v => set('lifecycleStage', v)}
               options={[
                 { value: 'existing', label: 'Existing' },
-                { value: 'under-construction', label: 'Under construction' },
+                { value: 'under_construction', label: 'Under construction' },
               ]}
             />
           </Field>
-          <Field label="Property Size" required>
+          <Field label="Property Size" required error={errors.propertySize}>
             <div className="flex gap-2">
-              <Input placeholder="0" value={form.propertySize} onChange={e => set('propertySize', e.target.value)} className="w-20" />
+              <Input placeholder="0" value={form.propertySize} onChange={e => set('propertySize', e.target.value)} className={`w-20 ${errors.propertySize ? 'border-red-500' : ''}`} />
               <Select value={form.propertySizeUnit} onValueChange={v => set('propertySizeUnit', v)}>
-                <SelectTrigger className="w-20">
-                  <SelectValue />
-                </SelectTrigger>
+                <SelectTrigger className="w-20"><SelectValue /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="ft²">ft²</SelectItem>
                   <SelectItem value="m²">m²</SelectItem>
@@ -193,15 +180,15 @@ export default function PropertySection() {
               </Select>
             </div>
           </Field>
-          <Field label="Property Age" required>
+          <Field label="Property Age" required error={errors.propertyAge}>
             <div className="flex items-center gap-2">
-              <Input placeholder="0" value={form.propertyAge} onChange={e => set('propertyAge', e.target.value)} className="w-20" />
+              <Input placeholder="0" value={form.propertyAge} onChange={e => set('propertyAge', e.target.value)} className={`w-20 ${errors.propertyAge ? 'border-red-500' : ''}`} />
               <span className="text-sm text-gray-600 whitespace-nowrap">Years</span>
             </div>
           </Field>
         </div>
         <div className="flex-1 min-w-0">
-          <Field label="Commercial Type" required>
+          <Field label="Commercial Type" required error={errors.commercialType} bordered>
             <RadioGroup
               name="commercialType"
               value={form.commercialType}
@@ -209,58 +196,55 @@ export default function PropertySection() {
               options={[
                 { value: 'retail', label: 'Retail' },
                 { value: 'office', label: 'Office' },
-                { value: 'tourism', label: 'Tourism & Hospitality' },
-                { value: 'industrial', label: 'Industrial & Logistics' },
-                { value: 'mixed', label: 'Mixed-Use' },
+                { value: 'tourism_hospitality', label: 'Tourism & Hospitality' },
+                { value: 'industrial_logistics', label: 'Industrial & Logistics' },
+                { value: 'mixed_use', label: 'Mixed-Use' },
               ]}
             />
           </Field>
         </div>
       </div>
 
-      {/* Row 5: Use of Proceeds / Tokenization Options */}
       <div className="flex gap-8 items-start">
-        <Field label="Use of Proceeds" required>
+        <Field label="Use of Proceeds" required error={errors.useOfProceeds} bordered>
           <RadioGroup
             name="useOfProceeds"
             value={form.useOfProceeds}
             onChange={v => set('useOfProceeds', v)}
-            options={[
-              { value: 'construction', label: 'Construction Funds' },
-              { value: 'infrastructure', label: 'Infrastructure Fundraising' },
-              { value: 'business', label: 'Fundraising for business expansion' },
-              { value: 'new-project', label: 'Fundraising for New Project' },
-            ]}
+              options={[
+                { value: 'construction_funds', label: 'Construction Funds' },
+                { value: 'infrastructure_fundraising', label: 'Infrastructure Fundraising' },
+                { value: 'fundraising_for_business_expansion', label: 'Fundraising for business expansion' },
+                { value: 'fundraising_for_new_project', label: 'Fundraising for New Project' },
+              ]}
           />
         </Field>
-        <Field label="Property Tokenization Options" required>
+        <Field label="Property Tokenization Options" required error={errors.tokenizationOptions} bordered>
           <RadioGroup
             name="tokenizationOptions"
             value={form.tokenizationOptions}
             onChange={v => set('tokenizationOptions', v)}
-            options={[
-              { value: 'sale', label: 'For Sale' },
-              { value: 'rent', label: 'For Rent' },
-              { value: 'both', label: 'For Both' },
-            ]}
+              options={[
+                { value: 'for_sale', label: 'For Sale' },
+                { value: 'for_rent', label: 'For Rent' },
+                { value: 'for_both', label: 'For Both' },
+              ]}
           />
         </Field>
       </div>
 
-      {/* Row 6: Expected Valuation */}
-      <Field label="Expected Valuation(USD)" required>
+      <Field label="Expected Valuation(USD)" required error={errors.expectedValuation}>
         <div className="relative">
           <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">$</span>
           <Input
             placeholder="Enter your estimated value, priced in USD"
             value={form.expectedValuation}
             onChange={e => set('expectedValuation', e.target.value)}
-            className="pl-7"
+            className={`pl-7 ${errors.expectedValuation ? 'border-red-500' : ''}`}
           />
         </div>
       </Field>
 
-      {/* Row 7: Description */}
       <Field label="Property Description  (Available in your preferred language)">
         <textarea
           placeholder=""
@@ -284,21 +268,17 @@ export default function PropertySection() {
   return (
     <SectionCard id="property" icon={PropertyIcon} title="Property" className="mb-8">
       <div className="py-4">
-        {/* 红框：flex 容器，左绿框=地址表单，右绿框=地图 */}
         {mapOnTop ? (
-          // Enter address 切换后：地图在上全宽，地址表单在下
           <>
             {MapBlock}
             <div className="mt-4">{AddressBlock}</div>
           </>
         ) : (
-          <div className="flex gap-6 items-start">
+          <div className="flex gap-6 items-stretch">
             <div className="flex-1 min-w-0">{AddressBlock}</div>
-            <div className="flex-1 min-w-0">{MapBlock}</div>
+            <div className="flex-1 min-w-0 flex flex-col">{MapBlock}</div>
           </div>
         )}
-
-        {/* 红框下方：其余属性字段，全宽展示 */}
         {ExtraBlock}
       </div>
     </SectionCard>

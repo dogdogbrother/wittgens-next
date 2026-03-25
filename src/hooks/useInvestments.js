@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useAuthStore } from '../store/useAuthStore'
-
-const BASE_URL = 'http://151.241.216.192:8000'
+import { get } from '../utils/request'
 
 export function useInvestments() {
   const { token } = useAuthStore()
@@ -19,13 +18,8 @@ export function useInvestments() {
     setLoading(true)
     setError(null)
     try {
-      const params = new URLSearchParams({ keyword: submittedKeyword, pageSize, pageIndex })
-      const res = await fetch(`${BASE_URL}/api/v1/app/market/investments?${params}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      if (!res.ok) throw new Error(`HTTP ${res.status}`)
-      const json = await res.json()
-      setData(json.list ?? json.data ?? [])
+      const json = await get('/api/v1/app/market/investments', { keyword: submittedKeyword, pageSize, pageIndex })
+      setData(json.list ?? json.data ?? json ?? [])
       setTotal(json.total ?? 0)
     } catch (e) {
       setError(e.message)

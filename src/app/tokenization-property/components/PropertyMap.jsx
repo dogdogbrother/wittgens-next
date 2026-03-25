@@ -25,7 +25,7 @@ export default function PropertyMap({ center, style }) {
   const position = center ? [center.lat, center.lng] : DEFAULT_CENTER
 
   return (
-    <div style={{ position: 'relative', zIndex: 0, isolation: 'isolate', overflow: 'hidden', borderRadius: '6px', ...style }}>
+    <div style={{ position: 'relative', zIndex: 0, isolation: 'isolate', overflow: 'hidden', borderRadius: '6px', height: '100%', ...style }}>
     <MapContainer
       center={position}
       zoom={14}
