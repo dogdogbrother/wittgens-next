@@ -15,7 +15,7 @@ export default function MyInvestment() {
   }
 
   return (
-    <div style={{ padding: '0 24px' }}>
+    <div style={{ padding: '0' }}>
       <InvestmentTable {...invest} />
     </div>
   )

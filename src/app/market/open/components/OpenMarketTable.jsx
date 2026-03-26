@@ -1,8 +1,9 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { ChevronLeft, ChevronRight, Loader2, ChevronDown, RefreshCw, LayoutList, LayoutGrid } from 'lucide-react'
 import { Icon } from '@iconify/react'
 import { cn } from '../../../../lib/utils'
 import MarketTableHeader from '../../components/MarketTableHeader'
+import PropertyCard from './PropertyCard'
 
 /* ─────────────── 工具函数 ─────────────── */
 function formatNum(val, decimals = 2) {
@@ -126,95 +127,32 @@ function Pagination({ pageIndex, pageSize, total, onPageChange }) {
 }
 
 /* ─────────────── 表头/单元格 ─────────────── */
-const TH = ({ children, className, green }) => (
+const TH = ({ children, className, green, style }) => (
   <th
     className={cn(
       'px-3.5 py-3 text-left text-[11px] font-bold font-[Inter,sans-serif] tracking-wide uppercase border-b border-slate-200 bg-slate-50 whitespace-nowrap',
       green ? 'text-[#00AC98]' : 'text-slate-500',
       className
     )}
+    style={style}
   >
     {children}
   </th>
 )
 
-const TD = ({ children, className }) => (
+const TD = ({ children, className, style }) => (
   <td
     className={cn(
       'px-3.5 py-3 text-[13px] font-[Inter,sans-serif] text-slate-800 border-b border-slate-100 align-middle',
       className
     )}
+    style={style}
   >
     {children}
   </td>
 )
 
 /* ─────────────── 网格卡片（Grid View） ─────────────── */
-function PropertyCard({ item }) {
-  return (
-    <div
-      className="p-px rounded-lg"
-      style={{
-        background: 'linear-gradient(180deg, rgba(155,195,229,1) 0%, rgba(213,232,248,1) 50%, rgba(233,236,237,1) 100%)',
-        boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
-      }}
-    >
-      <div className="bg-white rounded-lg p-4">
-        {/* 图片占位 */}
-        <div
-          className="w-full rounded-md mb-3 overflow-hidden flex items-center justify-center"
-          style={{
-            height: '140px',
-            background: 'linear-gradient(135deg, #E8F1FA 0%, #C8DFF5 100%)',
-          }}
-        >
-          <span className="text-3xl">🏢</span>
-        </div>
-        {/* 标题 */}
-        <div className="mb-2">
-          <SymbolBadge text={item.baseAsset} />
-        </div>
-        <p className="text-[13px] font-semibold text-slate-800 mb-1 truncate">{item.projectTitle || item.symbol || '—'}</p>
-        <p className="text-[11px] text-slate-400 mb-3">ID: {item.projectId ?? '—'}</p>
-        {/* 数据行 */}
-        <div className="grid grid-cols-2 gap-y-1 mb-4">
-          <div>
-            <p className="text-[10px] text-slate-400 uppercase tracking-wide">Estimated APY</p>
-            <p className="text-[13px] font-semibold text-[#00AC98]">{item.estimatedAPY ?? '—'}</p>
-          </div>
-          <div>
-            <p className="text-[10px] text-slate-400 uppercase tracking-wide">Current Price</p>
-            <p className="text-[13px] font-semibold text-[#00AC98]">{item.currentPrice ?? '—'}</p>
-          </div>
-          <div>
-            <p className="text-[10px] text-slate-400 uppercase tracking-wide">Total Supply</p>
-            <p className="text-[13px] text-slate-700">{formatNum(item.totalSupply)}</p>
-          </div>
-          <div>
-            <p className="text-[10px] text-slate-400 uppercase tracking-wide">Market Cap</p>
-            <p className="text-[13px] text-slate-700">{item.marketCap ?? '—'}</p>
-          </div>
-        </div>
-        {/* 按钮 */}
-        <div className="flex gap-2">
-          <button
-            className="flex-1 h-[40px] text-white text-[13px] font-semibold rounded-lg transition-opacity hover:opacity-90 cursor-pointer border-none"
-            style={{ background: 'linear-gradient(90deg, #3D81BC 0%, #096CC0 100%)' }}
-          >
-            Trade
-          </button>
-          <button className="w-[40px] h-[40px] border border-[#0A6DC0] bg-[#D8E6F2] rounded-lg flex items-center justify-center text-[#0A6DC0] hover:opacity-80 transition-opacity cursor-pointer">
-            ★
-          </button>
-        </div>
-        <div className="flex justify-center mt-2">
-          <button className="text-[12px] text-slate-400 hover:underline transition-all cursor-pointer">Details</button>
-        </div>
-      </div>
-    </div>
-  )
-}
-
 /* ─────────────── 主组件 ─────────────── */
 export default function OpenMarketTable({
   data,
@@ -230,6 +168,32 @@ export default function OpenMarketTable({
   const [viewMode, setViewMode] = useState('list')
   const [activeCategory, setActiveCategory] = useState('All')
   const [sortBy, setSortBy] = useState('new')
+  const [showShadow, setShowShadow] = useState(false)
+  const scrollRef = useRef(null)
+
+  useEffect(() => {
+    const el = scrollRef.current
+    if (!el) return
+    const update = () => {
+      const { scrollLeft, scrollWidth, clientWidth } = el
+      setShowShadow(scrollLeft + clientWidth < scrollWidth - 2)
+    }
+    update()
+    el.addEventListener('scroll', update)
+    window.addEventListener('resize', update)
+    return () => {
+      el.removeEventListener('scroll', update)
+      window.removeEventListener('resize', update)
+    }
+  }, [data])
+
+  const stickyStyle = (bg = '#F8FAFC') => ({
+    position: 'sticky',
+    right: 0,
+    backgroundColor: bg,
+    zIndex: 1,
+    boxShadow: showShadow ? 'inset 4px 0 6px -2px rgba(0,0,0,0.08)' : 'none',
+  })
 
   return (
     <div className="bg-white overflow-hidden mt-2">
@@ -301,7 +265,7 @@ export default function OpenMarketTable({
 
       {/* 内容区 */}
       {viewMode === 'list' ? (
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto" ref={scrollRef}>
           <table className="w-full border-collapse">
             <thead>
               <tr>
@@ -319,7 +283,7 @@ export default function OpenMarketTable({
                   </span>
                 </TH>
                 <TH>Market Cap</TH>
-                <TH className="text-right">Action</TH>
+                <TH style={stickyStyle('#F8FAFC')}>Action</TH>
               </tr>
             </thead>
             <tbody>
@@ -365,12 +329,12 @@ export default function OpenMarketTable({
                   <TD>
                     <span className="text-[#00AC98]">{row.marketCap ? `$${row.marketCap}` : '—'}</span>
                   </TD>
-                  <TD className="text-right">
-                    <div className="flex items-center justify-end gap-1.5">
-                      <button className="h-[22px] px-3 text-[12px] font-medium text-[#22537D] border border-[#22537D] rounded-full bg-white hover:bg-[#F4F8FC] transition-colors cursor-pointer">
+                  <TD style={stickyStyle('#ffffff')}>
+                    <div className="flex items-center gap-1.5">
+                      <button className="h-[30px] px-2.5 text-[13px] font-[Inter,sans-serif] bg-white border border-gray-300 rounded-md transition-colors duration-150 text-slate-800 cursor-pointer hover:border-[#0D6EC0]">
                         Trade
                       </button>
-                      <button className="h-[22px] px-3 text-[12px] font-medium text-[#22537D] border border-[#22537D] rounded-full bg-white hover:bg-[#F4F8FC] transition-colors cursor-pointer">
+                      <button className="h-[30px] px-2.5 text-[13px] font-[Inter,sans-serif] bg-white border border-gray-300 rounded-md transition-colors duration-150 text-slate-800 cursor-pointer hover:border-[#0D6EC0]">
                         Details
                       </button>
                     </div>

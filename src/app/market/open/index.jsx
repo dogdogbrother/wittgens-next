@@ -5,7 +5,7 @@ export default function OpenMarket() {
   const market = useSecondaryMarket()
 
   return (
-    <div style={{ padding: '0 24px' }}>
+    <div style={{ padding: '0' }}>
       <OpenMarketTable {...market} />
     </div>
   )
