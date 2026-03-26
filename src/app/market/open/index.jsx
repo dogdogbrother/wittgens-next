@@ -1,7 +1,12 @@
+import { useSecondaryMarket } from '../../../hooks/useSecondaryMarket'
+import OpenMarketTable from './components/OpenMarketTable'
+
 export default function OpenMarket() {
+  const market = useSecondaryMarket()
+
   return (
-    <div className="p-8">
-      <h2>Open Market</h2>
+    <div style={{ padding: '0 24px' }}>
+      <OpenMarketTable {...market} />
     </div>
   )
 }

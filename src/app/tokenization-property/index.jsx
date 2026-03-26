@@ -407,13 +407,13 @@ function StubSection({ id, icon, title }) {
 
 const INITIAL_FORM = {
   // Issuer
-  firstName: '', lastName: '', email: '', phoneCountry: '+1', phoneNumber: '', institution: '',
+  firstName: 'John', lastName: 'Smith', email: 'john.smith@example.com', phoneCountry: '+41', phoneNumber: '791234567', institution: 'Swiss Real Estate AG',
   // Property
-  country: 'CH', streetAddress: '', apt: '', city: '', province: '', postalCode: '',
-  lifecycleStage: 'existing', propertySize: '', propertySizeUnit: 'ft²', propertyAge: '',
-  commercialType: 'retail', useOfProceeds: 'construction_funds', tokenizationOptions: 'for_sale', expectedValuation: '', description: '',
+  country: 'CH', streetAddress: 'Bahnhofstrasse 10', apt: '3A', city: 'Zurich', province: 'Zurich', postalCode: '8001',
+  lifecycleStage: 'existing', propertySize: '1200', propertySizeUnit: 'ft²', propertyAge: '8',
+  commercialType: 'mixed_use', useOfProceeds: 'construction_funds', tokenizationOptions: 'for_sale', expectedValuation: '2500000', description: 'Prime commercial property located in the heart of Zurich, featuring modern amenities and excellent transport links.',
   // Mint Token
-  tokenName: '', tokenSymbol: '', expectedSupply: '',
+  tokenName: 'RWAT-ZH-001', tokenSymbol: 'RWAT', expectedSupply: '1000000',
   // Files
   documents: [], photos: [],
   // Invitation

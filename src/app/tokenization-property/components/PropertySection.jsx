@@ -27,7 +27,7 @@ function Field({ label, required, error, children, className = '', bordered = fa
 
 function RadioGroup({ name, options, value, onChange }) {
   return (
-    <div className="flex items-center gap-3 flex-nowrap mt-2">
+    <div className="flex items-center gap-3 flex-nowrap mt-3">
       {options.map((opt) => (
         <label key={opt.value} className="flex items-center gap-1.5 cursor-pointer text-sm" style={{ color: '#555C70' }}>
           <input

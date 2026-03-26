@@ -1,40 +1,7 @@
 import { useState } from 'react'
-import { Search, ChevronLeft, ChevronRight, ChevronDown, Loader2, FileText } from 'lucide-react'
+import { ChevronLeft, ChevronRight, ChevronDown, Loader2, FileText } from 'lucide-react'
 import { cn } from '../../../../lib/utils'
-
-function SearchBar({ value, onChange, onSearch, loading }) {
-  const handleKeyDown = (e) => {
-    if (e.key === 'Enter') onSearch()
-  }
-  return (
-    <div
-      className="flex items-center bg-white border border-gray-300 rounded-lg overflow-hidden transition-colors duration-150 focus-within:border-[#0D6EC0]"
-      style={{ height: '38px', width: '380px' }}
-    >
-      <input
-        type="text"
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        onKeyDown={handleKeyDown}
-        placeholder="Enter property ID, token name, contract address"
-        className="flex-1 h-full px-3 text-[13px] font-[Inter,sans-serif] text-slate-800 bg-transparent border-none outline-none placeholder:text-slate-400"
-      />
-      {/* 竖线分割 */}
-      <div style={{ width: '1px', height: '20px', backgroundColor: '#d1d5db', flexShrink: 0 }} />
-      {/* 搜索按钮 */}
-      <button
-        onClick={onSearch}
-        disabled={loading}
-        className="flex items-center justify-center px-3 h-full border-none bg-transparent cursor-pointer text-slate-400 hover:text-[#0D6EC0] transition-colors duration-150 disabled:cursor-not-allowed"
-      >
-        {loading
-          ? <Loader2 size={16} className="animate-spin text-[#0D6EC0]" />
-          : <Search size={16} />
-        }
-      </button>
-    </div>
-  )
-}
+import MarketTableHeader from '../../components/MarketTableHeader'
 
 function ClaimBtn({ disabled }) {
   const [open, setOpen] = useState(false)
@@ -155,12 +122,13 @@ export default function InvestmentTable({ data, total, loading, keyword, setKeyw
     <div className="bg-white overflow-hidden mt-2">
 
       {/* 顶部工具栏 */}
-      <div className="flex items-center justify-between py-4">
-        <h3 className="m-0 text-base font-bold font-[Manrope,sans-serif] text-slate-900">
-          My Investment
-        </h3>
-        <div className="flex items-center gap-2.5">
-          <SearchBar value={keyword} onChange={setKeyword} onSearch={handleSearch} loading={loading} />
+      <MarketTableHeader
+        title="My Investment"
+        keyword={keyword}
+        onChange={setKeyword}
+        onSearch={handleSearch}
+        loading={loading}
+        actions={
           <button
             className="flex items-center gap-2 bg-white border border-slate-300 rounded-lg cursor-pointer whitespace-nowrap hover:border-[#0D6EC0] transition-colors duration-150"
             style={{ height: '38px', padding: '0 16px', fontSize: '14px', fontWeight: 500, fontFamily: 'Inter, sans-serif', color: '#1e293b' }}
@@ -168,8 +136,8 @@ export default function InvestmentTable({ data, total, loading, keyword, setKeyw
             <FileText size={15} style={{ color: '#475569' }} />
             Claim details
           </button>
-        </div>
-      </div>
+        }
+      />
 
       {/* 表格 */}
       <div className="overflow-x-auto">

@@ -2,8 +2,8 @@ import { NavLink } from 'react-router-dom'
 import { Icon } from '@iconify/react'
 
 const TABS = [
-  { to: '/app/market/presale',    label: 'Presale Market',  icon: 'mdi:rocket-launch-outline' },
-  { to: '/app/market/open',       label: 'Open Market',     icon: 'mdi:store-outline' },
+  { to: '/app/market/primary',    label: 'Primary Market',  icon: 'mdi:rocket-launch-outline' },
+  { to: '/app/market/secondary', label: 'Secondary Market', icon: 'ix:linechart' },
   { to: '/app/market/investment', label: 'My Investment',   icon: 'mdi:bank-outline' },
 ]
 

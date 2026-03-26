@@ -1,9 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
-import { useAuthStore } from '../store/useAuthStore'
 import { get } from '../utils/request'
 
-export function useInvestments() {
-  const { token } = useAuthStore()
+export function useSecondaryMarket() {
   const [data, setData] = useState([])
   const [total, setTotal] = useState(0)
   const [loading, setLoading] = useState(false)
@@ -14,11 +12,14 @@ export function useInvestments() {
   const pageSize = 10
 
   const fetchData = useCallback(async () => {
-    if (!token) return
     setLoading(true)
     setError(null)
     try {
-      const json = await get('/api/v1/app/market/investments', { keyword: submittedKeyword, pageSize, pageIndex })
+      const json = await get('/api/v1/app/market/symbols', {
+        keyword: submittedKeyword,
+        pageSize,
+        pageIndex,
+      })
       const raw = json.list ?? json.data ?? json
       setData(Array.isArray(raw) ? raw : [])
       setTotal(json.total ?? 0)
@@ -27,20 +28,27 @@ export function useInvestments() {
     } finally {
       setLoading(false)
     }
-  }, [token, submittedKeyword, pageIndex, pageSize])
+  }, [submittedKeyword, pageIndex, pageSize])
 
-  useEffect(() => { fetchData() }, [fetchData])
+  useEffect(() => {
+    fetchData()
+  }, [fetchData])
 
-  // 点击搜索按钮或按 Enter 时调用
   const handleSearch = useCallback(() => {
     setSubmittedKeyword(keyword)
     setPageIndex(1)
   }, [keyword])
 
   return {
-    data, total, loading, error,
-    keyword, setKeyword,
-    pageIndex, setPageIndex, pageSize,
+    data,
+    total,
+    loading,
+    error,
+    keyword,
+    setKeyword,
+    pageIndex,
+    setPageIndex,
+    pageSize,
     handleSearch,
   }
 }
