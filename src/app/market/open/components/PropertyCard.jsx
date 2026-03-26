@@ -199,7 +199,7 @@ export default function PropertyCard({ item }) {
           </button>
         </div>
         <div className="flex justify-center mt-2">
-          <button className="text-[12px] text-slate-400 hover:underline transition-all cursor-pointer bg-transparent border-none">
+          <button className="text-[14px] text-slate-400 hover:underline transition-all cursor-pointer bg-transparent border-none">
             Details
           </button>
         </div>

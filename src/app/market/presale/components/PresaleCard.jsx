@@ -42,7 +42,7 @@ function CountdownUnit({ value, index }) {
       >
         {String(value).padStart(2, '0')}
       </div>
-      <span className="text-[10px] text-[#8B9DB5] font-medium tracking-widest">{UNIT_LABELS[index]}</span>
+      <span className="mt-2 text-[10px] text-[#8B9DB5] font-medium tracking-widest" style={{ lineHeight: '10px' }}>{UNIT_LABELS[index]}</span>
     </div>
   )
 }
@@ -273,7 +273,7 @@ export default function PresaleCard({ item }) {
         </button>
       </div>
       <div className="flex justify-center mt-2">
-        <button className="text-[12px] text-slate-400 hover:underline transition-all cursor-pointer bg-transparent border-none">
+        <button className="text-[14px] text-slate-400 hover:underline transition-all cursor-pointer bg-transparent border-none">
           Details
         </button>
       </div>
