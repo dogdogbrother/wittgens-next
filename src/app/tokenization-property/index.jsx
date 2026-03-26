@@ -208,7 +208,7 @@ function PropertyDocumentSection({ files, onChange, error, showToast }) {
     try {
       const raw = await uploadDocuments(selected)
       const results = Array.isArray(raw) ? raw : (raw ? [raw] : [])
-      const newItems = results.map(r => ({ name: r.fileName, fileUrl: r.fileUrl }))
+      const newItems = results.map(r => ({ fileName: r.fileName, fileUrl: r.fileUrl, contentType: r.contentType, size: r.size }))
       onChange('documents', [...files, ...newItems])
     } catch (err) {
       showToast(err.message || 'Document upload failed')
@@ -247,7 +247,7 @@ function PropertyDocumentSection({ files, onChange, error, showToast }) {
                 className="h-8 border border-[#D0E2EA] rounded p-3 flex items-center justify-between"
                 style={{ background: 'rgba(221,243,254,0.48)' }}
               >
-                <span className="text-sm text-[#00032A] truncate flex-1">{file.name}</span>
+                <span className="text-sm text-[#00032A] truncate flex-1">{file.fileName}</span>
                 <div className="flex items-center gap-2 ml-2 shrink-0">
                   <a href={file.fileUrl} target="_blank" rel="noreferrer" className="text-xs text-blue-600 underline hover:text-blue-800">Preview</a>
                   <button
@@ -280,7 +280,7 @@ function PropertyPhotosSection({ photos, onChange, error, showToast }) {
     try {
       const raw = await uploadImages(selected)
       const results = Array.isArray(raw) ? raw : (raw ? [raw] : [])
-      const newPhotos = results.map(r => ({ name: r.fileName, fileUrl: r.fileUrl }))
+      const newPhotos = results.map(r => ({ fileName: r.fileName, fileUrl: r.fileUrl, contentType: r.contentType, size: r.size }))
       onChange('photos', [...photos, ...newPhotos])
     } catch (err) {
       showToast(err.message || 'Photo upload failed')
@@ -527,39 +527,37 @@ export default function TokenizationProperty() {
       const areaUnit = formData.propertySizeUnit === 'ft²' ? 'ft' : 'm'
 
       const payload = {
-        issuer: {
-          firstName:   formData.firstName,
-          lastName:    formData.lastName,
-          email:       formData.email,
-          phoneCode:   formData.phoneCountry,
-          phone:       formData.phoneNumber,
-          institution: formData.institution,
-        },
-        property: {
-          countryCode:   formData.country,
-          country:       countryInfo?.name || formData.country,
-          street:        formData.streetAddress,
-          unit:          formData.apt,
-          city:          formData.city,
-          region:        formData.province,
-          postal:        formData.postalCode,
-          location:      [formData.city, countryInfo?.name].filter(Boolean).join(', '),
-          area:          formData.propertySize,
-          areaUnit,
-          stage:         formData.lifecycleStage,
-          age:           formData.propertyAge,
-          propertyType:  formData.commercialType,
-          useOfProceeds: formData.useOfProceeds,
-          valuation:     formData.expectedValuation,
-          description:   formData.description,
-        },
-        mintToken: {
-          tokenName:   formData.tokenName,
-          tokenSymbol: formData.tokenSymbol,
-          supply:      formData.expectedSupply,
-        },
-        documents: formData.documents.map(d => d.fileUrl),
-        photos:    formData.photos.map(p => p.fileUrl),
+        // Issuer
+        firstName:   formData.firstName,
+        lastName:    formData.lastName,
+        email:       formData.email,
+        phoneCode:   formData.phoneCountry,
+        phone:       formData.phoneNumber,
+        institution: formData.institution,
+        // Property
+        countryCode: formData.country,
+        country:     countryInfo?.name || formData.country,
+        street:      formData.streetAddress,
+        unit:        formData.apt,
+        city:        formData.city,
+        region:      formData.province,
+        postal:      formData.postalCode,
+        area:        String(formData.propertySize),
+        areaUnit,
+        stage:       formData.lifecycleStage,
+        age:         parseInt(formData.propertyAge, 10),
+        propertyType:  formData.commercialType,
+        useOfProceeds: formData.useOfProceeds,
+        valuation:     String(formData.expectedValuation),
+        description:   formData.description,
+        // Mint Token
+        tokenName:   formData.tokenName,
+        tokenSymbol: formData.tokenSymbol,
+        supply:      formData.expectedSupply,
+        // Files
+        documents: formData.documents.map(({ fileName, fileUrl, contentType }, i) => ({ fileName, fileUrl, documentType: contentType, sort: i })),
+        photos:    formData.photos.map(({ fileName, fileUrl }, i) => ({ fileName, fileUrl, sort: i })),
+        // Other
         remark:    formData.invitationCode,
       }
 

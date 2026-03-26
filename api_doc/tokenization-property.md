@@ -74,3 +74,6 @@
 | `documents` | 项目文档数组，至少 1 条 |
 | `photos` | 项目图片数组，至少 1 条 |
 | `remark` | 备注 |
+
+`documents`数组内对象内容有`documentType`/`fileUrl`/`fileName`/`sort`,这些参数都是文档上传接口返回的了,documentType就是contentType,sort是文档在回显时的index值.。
+`photos`数组内对象内容有`fileUrl`/`fileName`/`sort`,同上。

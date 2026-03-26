@@ -42,11 +42,12 @@ export async function request(path, options = {}) {
     },
   })
 
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}))
-    throw new Error(err.msg || `请求失败: ${res.status}`)
+  const data = await res.json().catch(() => ({}))
+
+  if (!res.ok || data.code !== 200) {
+    throw new Error(data.msg || `请求失败: ${data.code ?? res.status}`)
   }
-  const data = await res.json()
+
   return data.data ?? data
 }
 
