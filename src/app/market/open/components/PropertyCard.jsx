@@ -1,29 +1,9 @@
 import { useState } from 'react'
 import { Icon } from '@iconify/react'
 import placeholderImg from '../../../../assets/bg-svg/empty.svg'
+import DashedRow from '../../components/DashedRow'
 
-function DashedRow({ label, value, subValue, last }) {
-  return (
-    <div className="flex items-center justify-between pb-2 pt-3 relative">
-      <span className="text-[13px] text-[#7D7D7D]">{label}</span>
-      <div className="flex flex-col items-end">
-        <span className="text-[13px] font-semibold text-[#323232] leading-tight">{value}</span>
-        {subValue && <span className="text-[11px] text-[#888] leading-tight">{subValue}</span>}
-      </div>
-      {!last && (
-        <span
-          className="absolute bottom-0 left-0 right-0 h-px"
-          style={{
-            backgroundImage:
-              'repeating-linear-gradient(to right, #E5EBF1 0, #E5EBF1 6px, transparent 6px, transparent 12px)',
-          }}
-        />
-      )}
-    </div>
-  )
-}
-
-export default function PropertyCard({ item }) {
+export default function PropertyCard({ item, onDelete, hideCollect }) {
   const [collected, setCollected] = useState(false)
   const symbol = item.baseAsset ?? '—'
   const tradingPair = item.symbol ?? '—'
@@ -37,9 +17,17 @@ export default function PropertyCard({ item }) {
 
   return (
     <div
-      className="rounded-lg bg-white px-4 pt-4 pb-2"
+      className="rounded-lg bg-white px-4 pt-4 pb-2 relative"
       style={{ border: '1px solid #D5E8F8', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}
     >
+      {onDelete && (
+        <button
+          onClick={() => onDelete(item.id ?? item.projectId)}
+          className="absolute top-2 right-2 w-6 h-6 flex items-center justify-center rounded-full bg-slate-100 hover:bg-red-100 text-slate-400 hover:text-red-500 transition-colors cursor-pointer border-none z-10"
+        >
+          <Icon icon="mdi:close" width={13} height={13} />
+        </button>
+      )}
 
         {/* 顶部：图片 + 信息 */}
         <div className="flex gap-3 mb-4">
@@ -186,17 +174,19 @@ export default function PropertyCard({ item }) {
           >
             Trade
           </button>
-          <button
-            onClick={() => setCollected(v => !v)}
-            className="w-[44px] h-[44px] border border-[#0A6DC0] bg-[#D8E6F2] rounded-lg flex items-center justify-center hover:opacity-80 transition-opacity cursor-pointer shrink-0"
-            style={{ color: collected ? '#F59E0B' : '#0A6DC0' }}
-          >
-            <Icon
-              icon={collected ? 'material-symbols:kid-star-sharp' : 'material-symbols:kid-star-outline-sharp'}
-              width={22}
-              height={22}
-            />
-          </button>
+          {!hideCollect && (
+            <button
+              onClick={() => setCollected(v => !v)}
+              className="w-[44px] h-[44px] border border-[#0A6DC0] bg-[#D8E6F2] rounded-lg flex items-center justify-center hover:opacity-80 transition-opacity cursor-pointer shrink-0"
+              style={{ color: collected ? '#F59E0B' : '#0A6DC0' }}
+            >
+              <Icon
+                icon={collected ? 'material-symbols:kid-star-sharp' : 'material-symbols:kid-star-outline-sharp'}
+                width={22}
+                height={22}
+              />
+            </button>
+          )}
         </div>
         <div className="flex justify-center mt-2">
           <button className="text-[14px] text-slate-400 hover:underline transition-all cursor-pointer bg-transparent border-none">

@@ -5,6 +5,7 @@ import Market from './app/market/index'
 import PresaleMarket from './app/market/presale/index'
 import SecondaryMarket from './app/market/open/index'
 import MyInvestment from './app/market/investment/index'
+import MyCollection from './app/market/collection/index'
 import Earn from './app/earn/index'
 import Swap from './app/swap/index'
 import TokenizationProperty from './app/tokenization-property/index'
@@ -22,6 +23,7 @@ export default function App() {
             <Route path="secondary" element={<SecondaryMarket />} />
             <Route path="investment" element={<MyInvestment />} />
           </Route>
+          <Route path="collection" element={<MyCollection />} />
           <Route path="tokenization-property" element={<TokenizationProperty />} />
           <Route path="earn" element={<Earn />} />
           <Route path="swap" element={<Swap />} />

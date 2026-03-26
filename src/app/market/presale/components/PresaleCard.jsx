@@ -3,6 +3,7 @@ import { Icon } from '@iconify/react'
 import placeholderImg from '../../../../assets/bg-svg/empty.svg'
 import liveTagImg from '../../../../assets/icon-svg/liveTag.svg'
 import noLiveTagImg from '../../../../assets/icon-svg/noLiveTag.svg'
+import DashedRow from '../../components/DashedRow'
 
 /* ─── 倒计时 hook ─── */
 function useCountdown(endTimestamp) {
@@ -47,26 +48,8 @@ function CountdownUnit({ value, index }) {
   )
 }
 
-/* ─── 虚线行 ─── */
-function DashedRow({ label, value, subValue, last }) {
-  return (
-    <div className="flex items-center justify-between pb-1.5 pt-2.5 relative">
-      <span className="text-[13px] text-[#7D7D7D]">{label}</span>
-      <div className="flex flex-col items-end">
-        <span className="text-[13px] font-semibold text-[#323232] leading-tight">{value}</span>
-        {subValue && <span className="text-[11px] text-[#888] leading-tight">{subValue}</span>}
-      </div>
-      {!last && (
-        <span
-          className="absolute bottom-0 left-0 right-0 h-px"
-          style={{ backgroundImage: 'repeating-linear-gradient(to right, #E5EBF1 0, #E5EBF1 6px, transparent 6px, transparent 12px)' }}
-        />
-      )}
-    </div>
-  )
-}
 
-export default function PresaleCard({ item }) {
+export default function PresaleCard({ item, onDelete, hideCollect }) {
   const [collected, setCollected] = useState(false)
   const countdown = useCountdown(item.endTimestamp ?? Date.now())
   const isLive = item.status === 'live'
@@ -84,9 +67,17 @@ export default function PresaleCard({ item }) {
 
   return (
     <div
-      className="rounded-lg bg-white px-4 pt-4 pb-2"
+      className="rounded-lg bg-white px-4 pt-4 pb-2 relative"
       style={{ border: '1px solid #D5E8F8', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}
     >
+      {onDelete && (
+        <button
+          onClick={() => onDelete(item.id ?? item.projectId)}
+          className="absolute top-2 right-2 w-6 h-6 flex items-center justify-center rounded-full bg-slate-100 hover:bg-red-100 text-slate-400 hover:text-red-500 transition-colors cursor-pointer border-none z-10"
+        >
+          <Icon icon="mdi:close" width={13} height={13} />
+        </button>
+      )}
       {/* 顶部：图片 + 信息 */}
       <div className="flex gap-3 mb-4">
         {/* 图片 + Live 徽章 */}
@@ -240,7 +231,7 @@ export default function PresaleCard({ item }) {
         >
           Subscribe
         </button>
-        <button
+        {!hideCollect && <button
           onClick={() => isLive && setCollected(v => !v)}
           disabled={!isLive}
           className="w-[44px] h-[44px] rounded-lg flex items-center justify-center transition-opacity shrink-0"
@@ -270,7 +261,7 @@ export default function PresaleCard({ item }) {
             }
             width={22} height={22}
           />
-        </button>
+        </button>}
       </div>
       <div className="flex justify-center mt-2">
         <button className="text-[14px] text-slate-400 hover:underline transition-all cursor-pointer bg-transparent border-none">
