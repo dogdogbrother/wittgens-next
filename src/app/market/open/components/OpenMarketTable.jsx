@@ -92,7 +92,7 @@ function Pagination({ pageIndex, pageSize, total, onPageChange }) {
         disabled={pageIndex <= 1}
         className={cn(
           'w-8 h-8 flex items-center justify-center border border-slate-200 rounded-md bg-white',
-          pageIndex <= 1 ? 'cursor-not-allowed text-slate-300' : 'cursor-pointer text-slate-500 hover:border-[#0D6EC0]'
+          pageIndex <= 1 ? 'cursor-not-allowed pointer-events-auto text-slate-300' : 'cursor-pointer text-slate-500 hover:border-[#0D6EC0]'
         )}
       >
         <ChevronLeft size={15} />
@@ -117,7 +117,7 @@ function Pagination({ pageIndex, pageSize, total, onPageChange }) {
         disabled={pageIndex >= totalPages}
         className={cn(
           'w-8 h-8 flex items-center justify-center border border-slate-200 rounded-md bg-white',
-          pageIndex >= totalPages ? 'cursor-not-allowed text-slate-300' : 'cursor-pointer text-slate-500 hover:border-[#0D6EC0]'
+          pageIndex >= totalPages ? 'cursor-not-allowed pointer-events-auto text-slate-300' : 'cursor-pointer text-slate-500 hover:border-[#0D6EC0]'
         )}
       >
         <ChevronRight size={15} />

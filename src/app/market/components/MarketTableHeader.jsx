@@ -46,7 +46,7 @@ export default function MarketTableHeader({ title, keyword, onChange, onSearch, 
     <div className="flex items-center justify-between py-4">
       <h3
         className="m-0 font-bold font-[Manrope,sans-serif] text-slate-900"
-        style={{ fontSize: '16px' }}
+        style={{ fontSize: '22px' }}
       >
         {title}
       </h3>

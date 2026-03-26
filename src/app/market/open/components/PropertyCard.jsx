@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Icon } from '@iconify/react'
 import placeholderImg from '../../../../assets/bg-svg/empty.svg'
 
@@ -23,6 +24,7 @@ function DashedRow({ label, value, subValue, last }) {
 }
 
 export default function PropertyCard({ item }) {
+  const [collected, setCollected] = useState(false)
   const symbol = item.baseAsset ?? '—'
   const tradingPair = item.symbol ?? '—'
   const title = item.projectTitle || symbol
@@ -184,8 +186,16 @@ export default function PropertyCard({ item }) {
           >
             Trade
           </button>
-          <button className="w-[44px] h-[44px] border border-[#0A6DC0] bg-[#D8E6F2] rounded-lg flex items-center justify-center text-[#0A6DC0] hover:opacity-80 transition-opacity cursor-pointer shrink-0">
-            <Icon icon="solar:star-circle-bold" width={22} height={22} />
+          <button
+            onClick={() => setCollected(v => !v)}
+            className="w-[44px] h-[44px] border border-[#0A6DC0] bg-[#D8E6F2] rounded-lg flex items-center justify-center hover:opacity-80 transition-opacity cursor-pointer shrink-0"
+            style={{ color: collected ? '#F59E0B' : '#0A6DC0' }}
+          >
+            <Icon
+              icon={collected ? 'material-symbols:kid-star-sharp' : 'material-symbols:kid-star-outline-sharp'}
+              width={22}
+              height={22}
+            />
           </button>
         </div>
         <div className="flex justify-center mt-2">

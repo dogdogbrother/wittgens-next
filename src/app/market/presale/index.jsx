@@ -1,7 +1,12 @@
+import { usePresaleMarket } from '../../../hooks/usePresaleMarket'
+import PrimaryMarketTable from './components/PrimaryMarketTable'
+
 export default function PresaleMarket() {
+  const market = usePresaleMarket()
+
   return (
-    <div className="p-8">
-      <h2>Presale Market</h2>
+    <div style={{ padding: '0' }}>
+      <PrimaryMarketTable {...market} />
     </div>
   )
 }
