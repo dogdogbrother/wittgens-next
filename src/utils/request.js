@@ -2,16 +2,30 @@ import { useAuthStore } from '../store/useAuthStore'
 
 export const BASE_URL = 'http://151.241.216.192:8000'
 
+// 防止并发请求同时触发多次刷新
+let refreshingPromise = null
+
 function getToken() {
-  // 优先从 zustand 内存状态读取
   const token = useAuthStore.getState().token
   if (token) return token
-  // fallback：直接从 localStorage 读取（防止 persist hydration 未完成）
   try {
     const raw = localStorage.getItem('rwa-auth')
     if (raw) {
       const parsed = JSON.parse(raw)
       return parsed?.state?.token ?? null
+    }
+  } catch {}
+  return null
+}
+
+function getRefreshToken() {
+  const rt = useAuthStore.getState().refreshToken
+  if (rt) return rt
+  try {
+    const raw = localStorage.getItem('rwa-auth')
+    if (raw) {
+      const parsed = JSON.parse(raw)
+      return parsed?.state?.refreshToken ?? null
     }
   } catch {}
   return null
@@ -29,7 +43,37 @@ function getAuthHeaders(isFormData = false) {
   return headers
 }
 
-export async function request(path, options = {}) {
+async function tryRefreshToken() {
+  if (refreshingPromise) return refreshingPromise
+
+  refreshingPromise = (async () => {
+    const refreshToken = getRefreshToken()
+    if (!refreshToken) throw new Error('no_refresh_token')
+
+    const res = await fetch(`${BASE_URL}/api/v1/app/auth/refresh`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ refreshToken }),
+    })
+    const data = await res.json().catch(() => ({}))
+
+    if (res.ok && data.code === 200) {
+      const { accessToken, refreshToken: newRefreshToken } = data.data
+      useAuthStore.getState().setAuth({
+        token: accessToken,
+        refreshToken: newRefreshToken,
+        address: useAuthStore.getState().address,
+      })
+      return true
+    }
+    throw new Error('refresh_failed')
+  })()
+    .finally(() => { refreshingPromise = null })
+
+  return refreshingPromise
+}
+
+export async function request(path, options = {}, _isRetry = false) {
   const { headers: extraHeaders, body, ...rest } = options
   const isFormData = body instanceof FormData
 
@@ -43,6 +87,17 @@ export async function request(path, options = {}) {
   })
 
   const data = await res.json().catch(() => ({}))
+
+  // token 过期时尝试刷新后重试一次
+  if ((res.status === 401 || data.code === 401) && !_isRetry) {
+    try {
+      await tryRefreshToken()
+      return request(path, options, true)
+    } catch {
+      useAuthStore.getState().logout()
+      throw new Error('登录已过期，请重新登录')
+    }
+  }
 
   if (!res.ok || data.code !== 200) {
     throw new Error(data.msg || `请求失败: ${data.code ?? res.status}`)

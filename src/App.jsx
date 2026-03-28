@@ -9,6 +9,7 @@ import MyCollection from './app/market/collection/index'
 import Earn from './app/earn/index'
 import Swap from './app/swap/index'
 import TokenizationProperty from './app/tokenization-property/index'
+import Subscription from './app/market/presale/subscription/index'
 
 export default function App() {
   return (
@@ -24,6 +25,7 @@ export default function App() {
             <Route path="investment" element={<MyInvestment />} />
           </Route>
           <Route path="collection" element={<MyCollection />} />
+          <Route path="subscription" element={<Subscription />} />
           <Route path="tokenization-property" element={<TokenizationProperty />} />
           <Route path="earn" element={<Earn />} />
           <Route path="swap" element={<Swap />} />

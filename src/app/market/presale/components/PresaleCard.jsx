@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Icon } from '@iconify/react'
 import placeholderImg from '../../../../assets/bg-svg/empty.svg'
 import liveTagImg from '../../../../assets/icon-svg/liveTag.svg'
@@ -51,6 +52,7 @@ function CountdownUnit({ value, index }) {
 
 export default function PresaleCard({ item, onDelete, hideCollect }) {
   const [collected, setCollected] = useState(false)
+  const navigate = useNavigate()
   const countdown = useCountdown(item.endTimestamp ?? Date.now())
   const isLive = item.status === 'live'
 
@@ -220,6 +222,7 @@ export default function PresaleCard({ item, onDelete, hideCollect }) {
       <div className="flex gap-2 mt-3">
         <button
           disabled={!isLive}
+          onClick={() => isLive && navigate('/app/subscription', { state: { item } })}
           className="flex-1 h-[44px] text-white text-[14px] font-semibold rounded-lg transition-opacity border-none cursor-pointer"
           style={{
             background: isLive
